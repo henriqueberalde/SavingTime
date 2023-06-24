@@ -10,7 +10,7 @@ namespace SavingTime
         [Option('x', "exit", Required = false, HelpText = "Register an exit record.")]
         public bool Exit { get; set; }
 
-        [Option('d', "date", Required = false, HelpText = "The Datetime of the record. Format: YYYY-MM-DD HH:MM")]
+        [Option('d', "date", Required = false, HelpText = "The Datetime of the record. Format: YYYY-MM-DDTHH:MM")]
         public string ?DateTime { get; set; }
 
         [Option('t', "time", Required = false, HelpText = "The Time of the record. Format: HH:MM")]

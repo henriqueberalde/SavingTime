@@ -27,8 +27,8 @@ A tool to store time records at work
 - [x] Entry
 - [x] Exit
 - [ ] Context
-- [ ] Set DateTime
-- [ ] Set Time
+- [x] Set DateTime
+- [x] Set Time
 - [x] Help
 - [x] History
 - [ ] History per date range
@@ -38,4 +38,5 @@ A tool to store time records at work
 - [ ] Add context to time record
 - [ ] Id to GUID type
 - [ ] Error handling
+- [ ] Unit Tests
 
