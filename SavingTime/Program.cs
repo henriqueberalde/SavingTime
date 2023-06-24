@@ -1,13 +1,15 @@
 ﻿using CommandLine;
+using System;
 
 namespace SavingTime
 {
-    internal class Program
+    internal class Program  
     {
         static void Main(string[] args)
         {
             while (true)
             {
+                Console.Write(">");
                 var line = Console.In.ReadLine();
 
                 if (line is null)
@@ -16,88 +18,47 @@ namespace SavingTime
                 var stdin = line.Split(' ');
 
                 Parser.Default.ParseArguments<Options>(stdin)
-                .WithParsed<Options>(o =>
+                .WithParsed(o =>
                 {
-                    if (o.Verbose)
+                    DateTime? datetime = null;
+                    TimeSpan? time = null;
+
+                    if (o.Time is not null)
                     {
-                        Console.WriteLine($"VERBOSE");
+                        time = TimeSpan.ParseExact(
+                            o.Time,
+                            "yyyy-MM-dd HH:mm",
+                            System.Globalization.CultureInfo.InvariantCulture);
                     }
-                    else if (o.Help)
+
+                    if (o.DateTime is not null)
                     {
-                        Console.WriteLine($"HELP");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"NOTHING");
-                    }
+                        datetime = DateTime.ParseExact(
+                            o.DateTime,
+                            "yyyy-MM-dd HH:mm",
+                            System.Globalization.CultureInfo.InvariantCulture);
+                    }                    
+
+                    if (o.Entry) { Entry(o.Context, datetime, time); }
+                    if (o.Exit) { Exit(o.Context, datetime, time); }
+                    if (o.History) { History(); }
                 });
-
-                /*Console.Write("Enter a command >");
-                var command = Console.ReadLine();
-
-                command = command is not null ? command.Trim() : "";
-
-                if (string.IsNullOrEmpty(command))
-                    continue;
-
-                try
-                {
-                    switch (command)
-                    {
-                        case "entry":
-                            throw new NotImplementedException();
-                        // break;
-                        case "exit":
-                            throw new NotImplementedException();
-                        // break;
-                        case "history":
-                            throw new NotImplementedException();
-                        // break;
-                        case "help":
-                            throw new NotImplementedException();
-                        // break;
-                        default:
-                            // throw new CommandInvalidException();
-                            throw new Exception();
-                    }
-                }
-                catch (CommandInvalidException)
-                {
-                    Console.WriteLine("Invalid Command");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error executing action");
-                    Console.WriteLine(ex);
-                }
-
-                Console.WriteLine();
-                Console.WriteLine();*/
             }
         }
 
-        public static void Help()
-        {
-            Console.WriteLine("ALL COMMANDS\n");
-            Console.WriteLine($"entry  : Save an entry record");
-            Console.WriteLine($"entry  : Save an exit record");
-            Console.WriteLine($"history: Show history of records");
-            Console.WriteLine($"help   : Show this message");
-        }
-
-       /* public static void Entry()
+        public static void Entry(string? context, DateTime? dateTime, TimeSpan? time)
         {
             RegisterTimeRecord(TimeRecordType.Entry);
         }
 
-        public static void Exit()
+        public static void Exit(string? context, DateTime? dateTime, TimeSpan? time)
         {
             RegisterTimeRecord(TimeRecordType.Exit);
         }
 
         public static void RegisterTimeRecord(TimeRecordType type, DateTime? date = null)
         {
-            using (var db = new TimeRecordContext())
+            using (var db = new SavingTimeDbContext())
             {
                 var dateRecord = DateTime.Now;
 
@@ -109,8 +70,30 @@ namespace SavingTime
                 var timeRecord = new TimeRecord(dateRecord, type);
                 db.TimeRecords.Add(timeRecord);
                 db.SaveChanges();
-                Console.Write($"{type.ToString()} Registered");
+                Console.WriteLine($"{type.ToString()} Registered");
             }
-        }*/
+        }
+
+        public static void History()
+        {
+            using (var db = new SavingTimeDbContext())
+            {
+                var query = db.TimeRecords.OrderByDescending((t) => t.Time);
+
+                Console.WriteLine("All TimeRecords from data base:\n");
+                foreach (var item in query)
+                {
+                    ConsoleColor color;// = ConsoleColor.Red;
+                    if (item.Type == TimeRecordType.Entry)
+                        color = ConsoleColor.Green;
+                    else
+                        color = ConsoleColor.Red;
+
+                    Console.ForegroundColor = color;
+                    Console.WriteLine($"{item.Id} {item.Type.ToString()} - {item.Time}");
+                    Console.ResetColor();
+                }
+            }
+        }
     }
 }

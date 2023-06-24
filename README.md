@@ -23,12 +23,19 @@ A tool to store time records at work
 
 # TODO
 - [x] Add REPL or args parser lib
-- [ ] Create repository
-- [ ] Entry
-- [ ] Exit
+- [x] Create repository
+- [x] Entry
+- [x] Exit
 - [ ] Context
-- [ ] Help
-- [ ] History
+- [ ] Set DateTime
+- [ ] Set Time
+- [x] Help
+- [x] History
 - [ ] History per date range
 - [ ] History per context
+- [ ] Balance
+- [ ] History with balance
 - [ ] Add context to time record
+- [ ] Id to GUID type
+- [ ] Error handling
+
