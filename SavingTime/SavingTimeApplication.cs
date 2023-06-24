@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using Microsoft.EntityFrameworkCore;
 
 namespace SavingTime
 {
@@ -31,74 +30,21 @@ namespace SavingTime
                 Parser.Default.ParseArguments<Options>(stdin)
                 .WithParsed(o =>
                 {
-                    DateTime? datetime = null;
-
-                    if (o.DateTime is not null)
-                    {
-                        datetime = DateTime.ParseExact(
-                            o.DateTime,
-                            "yyyy-MM-ddTHH:mm",
-                            System.Globalization.CultureInfo.InvariantCulture);
-                    } else if (o.Time is not null)
-                    {
-                        var timeParts = o.Time.Split(':');
-
-                        var isValid =
-                            (o.Time.Length == 5) &&
-                            o.Time.Contains(":") &&
-                            (timeParts.Length == 2);
-
-                        var isHourNumber = int.TryParse(timeParts[0], out var hour);
-                        var isMinuteNumber = int.TryParse(timeParts[1], out var minute);
-
-                        isValid = isValid &&
-                            isHourNumber &&
-                            isMinuteNumber &&
-                            (hour >= 0 && hour <= 23) &&
-                            (minute >= 0 && minute <= 59);
-
-                        if (!isValid)
-                        {
-                            throw new ArgumentException($"Time is invalid {o.Time}. Correct format: HH:mm");
-                        }
-
-                        var now = DateTime.Now;
-                        datetime = new DateTime(
-                            DateTime.Now.Year,
-                            DateTime.Now.Month,
-                            DateTime.Now.Day,
-                            hour,
-                            minute,
-                            0
-                        );
-                    }
-
-                    if (o.Entry) { Entry(o.Context, datetime); }
-                    if (o.Exit) { Exit(o.Context, datetime); }
                     if (o.History) { History(); }
+                    if (o.Entry || o.Exit) { RegisterTimeRecord(o); }
                 });
             }
         }
 
-        public void Entry(string? context, DateTime? dateTime)
-        {
-            RegisterTimeRecord(TimeRecordType.Entry, context, dateTime);
-        }
-
-        public void Exit(string? context, DateTime? dateTime)
-        {
-            RegisterTimeRecord(TimeRecordType.Exit, context, dateTime);
-        }
-
-        public void RegisterTimeRecord(TimeRecordType type, string? context, DateTime? dateTime)
+        public void RegisterTimeRecord(Options o)
         {
             var timeRecord = new TimeRecord(
-                dateTime ?? DateTime.Now,
-                type
+                o.DateTimeConverted ?? DateTime.Now,
+                o.TypeRecord
             );
             _dbContext.TimeRecords.Add(timeRecord);
             _dbContext.SaveChanges();
-            Console.WriteLine($"{type} Registered");
+            Console.WriteLine($"{o.TypeRecord} Registered");
         }
 
         public void History()
@@ -108,14 +54,14 @@ namespace SavingTime
             Console.WriteLine("All TimeRecords from data base:\n");
             foreach (var item in query)
             {
-                ConsoleColor color;// = ConsoleColor.Red;
+                ConsoleColor color;
                 if (item.Type == TimeRecordType.Entry)
                     color = ConsoleColor.Green;
                 else
                     color = ConsoleColor.Red;
 
                 Console.ForegroundColor = color;
-                Console.WriteLine($"{item.Id} {item.Type.ToString()} - {item.Time}");
+                Console.WriteLine(item.ToString());
                 Console.ResetColor();
             }
         }

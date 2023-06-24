@@ -15,6 +15,11 @@
             Time = time;
             Type = type;
         }
+
+        public override string ToString()
+        {
+            return $"{Id} {Type} - {Time}";
+        }
     }
 
     public enum TimeRecordType

@@ -26,11 +26,12 @@ A tool to store time records at work
 - [x] Create repository
 - [x] Entry
 - [x] Exit
-- [ ] Context
 - [x] Set DateTime
 - [x] Set Time
 - [x] Help
 - [x] History
+- [ ] Context
+- [ ] Unit Tests
 - [ ] History per date range
 - [ ] History per context
 - [ ] Balance
@@ -38,5 +39,3 @@ A tool to store time records at work
 - [ ] Add context to time record
 - [ ] Id to GUID type
 - [ ] Error handling
-- [ ] Unit Tests
-
