@@ -40,7 +40,8 @@ namespace SavingTime
         {
             var timeRecord = new TimeRecord(
                 o.DateTimeConverted ?? DateTime.Now,
-                o.TypeRecord
+                o.TypeRecord,
+                o.Context
             );
             _dbContext.TimeRecords.Add(timeRecord);
             _dbContext.SaveChanges();
