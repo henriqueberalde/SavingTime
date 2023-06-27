@@ -1,4 +1,4 @@
-﻿namespace SavingTime
+﻿namespace SavingTime.Entities
 {
     public class TimeRecord
     {
@@ -6,10 +6,6 @@
         public DateTime Time { get; set; }
         public TimeRecordType Type { get; set; }
         public string? Context { get; set; }
-
-        public TimeRecord()
-        {
-        }
 
         public TimeRecord(
             DateTime time,

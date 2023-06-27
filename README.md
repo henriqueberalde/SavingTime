@@ -30,7 +30,7 @@ A tool to store time records at work
 - [x] Set Time
 - [x] Help
 - [x] History
-- [ ] Context
+- [x] Context
 - [ ] Unit Tests
 - [ ] History per date range
 - [ ] History per context

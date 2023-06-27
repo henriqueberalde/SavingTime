@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SavingTime.Entities;
 
-namespace SavingTime
+namespace SavingTime.Data
 {
     public class SavingTimeDbContext : DbContext
     {

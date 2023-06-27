@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SavingTime.Bussiness;
+using SavingTime.Data;
 
 namespace SavingTime
 {

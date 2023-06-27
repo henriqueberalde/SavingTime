@@ -1,6 +1,7 @@
 ﻿using CommandLine;
+using SavingTime.Entities;
 
-namespace SavingTime
+namespace SavingTime.Bussiness
 {
     public class Options
     {
@@ -22,6 +23,9 @@ namespace SavingTime
         [Option("history", Required = false, HelpText = "All time records.")]
         public bool History { get; set; }
 
+        [Option("summary", Required = false, HelpText = "Summary of the entire base.")]
+        public bool Summary { get; set; }
+
         public TimeRecordType TypeRecord
         {
             get
@@ -33,7 +37,8 @@ namespace SavingTime
             }
         }
 
-        public DateTime? DateTimeConverted {
+        public DateTime? DateTimeConverted
+        {
 
             get
             {
@@ -59,9 +64,9 @@ namespace SavingTime
             var timeParts = Time.Split(':');
 
             var isValid =
-                (Time.Length == 5) &&
+                Time.Length == 5 &&
                 Time.Contains(':') &&
-                (timeParts.Length == 2);
+                timeParts.Length == 2;
 
             var isHourNumber = int.TryParse(timeParts[0], out var hour);
             var isMinuteNumber = int.TryParse(timeParts[1], out var minute);
@@ -69,14 +74,14 @@ namespace SavingTime
             isValid = isValid &&
                 isHourNumber &&
                 isMinuteNumber &&
-                (hour >= 0 && hour <= 23) &&
-                (minute >= 0 && minute <= 59);
+                hour >= 0 && hour <= 23 &&
+                minute >= 0 && minute <= 59;
 
             if (!isValid)
             {
                 throw new ArgumentException($"Time is invalid {Time}. Correct format: HH:mm");
             }
-            
+
             return new DateTime(
                 System.DateTime.Now.Year,
                 System.DateTime.Now.Month,

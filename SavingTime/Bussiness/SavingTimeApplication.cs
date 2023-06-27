@@ -1,6 +1,11 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Primitives;
+using SavingTime.Data;
+using SavingTime.Entities;
+using System.Collections.Generic;
+using System.Text;
 
-namespace SavingTime
+namespace SavingTime.Bussiness
 {
     public interface ISavingTimeApplication
     {
@@ -19,7 +24,9 @@ namespace SavingTime
         {
             while (true)
             {
-                Console.Write(">");
+                // ShowSummary();
+
+                Console.WriteLine("\n>");
                 var line = Console.In.ReadLine();
 
                 if (line is null)
@@ -30,6 +37,7 @@ namespace SavingTime
                 Parser.Default.ParseArguments<Options>(stdin)
                 .WithParsed(o =>
                 {
+                    if (o.Summary) { ShowSummary(); }
                     if (o.History) { History(); }
                     if (o.Entry || o.Exit) { RegisterTimeRecord(o); }
                 });
@@ -48,11 +56,13 @@ namespace SavingTime
             Console.WriteLine($"{o.TypeRecord} Registered");
         }
 
+
         public void History()
         {
-            var query = _dbContext.TimeRecords.OrderByDescending((t) => t.Time);
+            var query = _dbContext.TimeRecords.OrderBy((t) => t.Time);
 
             Console.WriteLine("All TimeRecords from data base:\n");
+
             foreach (var item in query)
             {
                 ConsoleColor color;
@@ -65,6 +75,16 @@ namespace SavingTime
                 Console.WriteLine(item.ToString());
                 Console.ResetColor();
             }
+        }
+
+        public void ShowSummary()
+        {
+            var list = _dbContext.TimeRecords.OrderBy((t) => t.Time).ToList();
+
+            Console.WriteLine("Summary:\n");
+            var summary = Summary.FromTimeRecordList(list);
+
+            Console.WriteLine(summary.ToString());
         }
     }
 }
