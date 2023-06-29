@@ -1,9 +1,8 @@
 ﻿using CommandLine;
-using Microsoft.Extensions.Primitives;
+using Integrations;
 using SavingTime.Data;
 using SavingTime.Entities;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace SavingTime.Bussiness
 {
@@ -22,11 +21,20 @@ namespace SavingTime.Bussiness
         }
         public void Run()
         {
+            Console.WriteLine("SAVING TIME\n");
+
+            try
+            {
+                ShowSummary();
+            }
+            catch (Exception)
+            {
+                Console.Write("Error on Summary");
+            }            
+
             while (true)
             {
-                // ShowSummary();
-
-                Console.WriteLine("\n>");
+                Console.Write(">");
                 var line = Console.In.ReadLine();
 
                 if (line is null)
@@ -34,25 +42,67 @@ namespace SavingTime.Bussiness
 
                 var stdin = line.Split(' ');
 
-                Parser.Default.ParseArguments<Options>(stdin)
+                Parser.Default.ParseArguments<
+                    EntryCommand,
+                    ExitCommand,
+                    HistoryCommand,
+                    SummaryCommand
+                >(stdin)
                 .WithParsed(o =>
                 {
-                    if (o.Summary) { ShowSummary(); }
-                    if (o.History) { History(); }
-                    if (o.Entry || o.Exit) { RegisterTimeRecord(o); }
+                    switch (o)
+                    {
+                        case EntryCommand:
+                            RegisterTimeRecord((EntryCommand)o);
+                            break;
+                        case ExitCommand:
+                            RegisterTimeRecord((ExitCommand) o);
+                            break;
+                        case HistoryCommand:
+                            History();
+                            break;
+                        case SummaryCommand:
+                            ShowSummary();
+                            break;
+                    }
                 });
             }
         }
 
-        public void RegisterTimeRecord(Options o)
+        public void RegisterTimeRecord(LogTimeCommand o)
         {
+            var dateTime = o.DateTimeConverted ?? DateTime.Now;
             var timeRecord = new TimeRecord(
-                o.DateTimeConverted ?? DateTime.Now,
+                dateTime,
                 o.TypeRecord,
                 o.Context
             );
             _dbContext.TimeRecords.Add(timeRecord);
             _dbContext.SaveChanges();
+
+            if (!o.CancelIntegration)
+            {
+                var dateTimePlus10Min = dateTime.AddSeconds(60 * 10);
+                var config = new LacunaConfiguration(
+                    "carlosb",
+                    "Henrique0428!",
+                    "Carlos Beralde",
+                    dateTime,
+                    o.TypeRecord.ToString()
+                );
+                var interation = new LacunaIntegration(config);
+
+                var todayInitial = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
+                var todayEnd = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 23, 59, 59);
+                var line = _dbContext.TimeRecords.Where(t => t.Time >= todayInitial && t.Time <= todayEnd && t.Type == o.TypeRecord).Count() - 1;
+
+                interation.Login();
+                interation.LogWork(
+                    line,
+                    dateTime.ToString("HH:mm"),
+                    dateTimePlus10Min.ToString("HH:mm"));
+            }
+
             Console.WriteLine($"{o.TypeRecord} Registered");
         }
 
@@ -79,7 +129,12 @@ namespace SavingTime.Bussiness
 
         public void ShowSummary()
         {
-            var list = _dbContext.TimeRecords.OrderBy((t) => t.Time).ToList();
+            var now = DateTime.Now;
+            var list = _dbContext
+                .TimeRecords
+                .Where(t => t.Time < new DateTime(now.Year, now.Month, now.Day, 0, 0, 0))
+                .OrderBy((t) => t.Time)
+                .ToList();
 
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);

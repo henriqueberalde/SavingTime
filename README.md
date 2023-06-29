@@ -31,11 +31,14 @@ A tool to store time records at work
 - [x] Help
 - [x] History
 - [x] Context
+- [x] Add context to time record
+- [x] Integrate with Lacuna Web App for log work
+- [ ] Internalize database with SqLite to install db with the application
+- [ ] Setup Intalation for the console application on windows
 - [ ] Unit Tests
 - [ ] History per date range
 - [ ] History per context
 - [ ] Balance
 - [ ] History with balance
-- [ ] Add context to time record
 - [ ] Id to GUID type
 - [ ] Error handling

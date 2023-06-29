@@ -3,13 +3,9 @@ using SavingTime.Entities;
 
 namespace SavingTime.Bussiness
 {
-    public class Options
+    public abstract class LogTimeCommand
     {
-        [Option('e', "entry", Required = false, HelpText = "Register an entry record.")]
-        public bool Entry { get; set; }
-
-        [Option('x', "exit", Required = false, HelpText = "Register an exit record.")]
-        public bool Exit { get; set; }
+        public TimeRecordType TypeRecord { get; set; }
 
         [Option('d', "date", Required = false, HelpText = "The Datetime of the record. Format: YYYY-MM-DDTHH:MM")]
         public string? DateTime { get; set; }
@@ -20,33 +16,23 @@ namespace SavingTime.Bussiness
         [Option('c', "context", Required = false, HelpText = "Context of the record.")]
         public string? Context { get; set; }
 
-        [Option("history", Required = false, HelpText = "All time records.")]
-        public bool History { get; set; }
-
-        [Option("summary", Required = false, HelpText = "Summary of the entire base.")]
-        public bool Summary { get; set; }
-
-        public TimeRecordType TypeRecord
-        {
-            get
-            {
-                if (Entry) { return TimeRecordType.Entry; }
-                if (Exit) { return TimeRecordType.Exit; }
-
-                throw new Exception($"No type record passed. You must choose entry or exit record");
-            }
-        }
+        [Option("no-integration", HelpText = "Context of the record.")]
+        public bool CancelIntegration { get; set; }
 
         public DateTime? DateTimeConverted
         {
-
             get
             {
-                return ConvertDateTime() ?? ConvertTime();
+                return convertDateTime() ?? convertTime();
             }
         }
 
-        private DateTime? ConvertDateTime()
+        public LogTimeCommand(TimeRecordType type)
+        {
+            TypeRecord = type;
+        }
+
+        private DateTime? convertDateTime()
         {
             return DateTime is not null
                 ? System.DateTime.ParseExact(
@@ -57,7 +43,7 @@ namespace SavingTime.Bussiness
                 : null;
         }
 
-        private DateTime? ConvertTime()
+        private DateTime? convertTime()
         {
             if (Time is null) { return null; }
 
@@ -91,5 +77,31 @@ namespace SavingTime.Bussiness
                 0
             );
         }
+    }
+
+    [Verb("entry", HelpText = "Register an entry record.")]
+    public class EntryCommand : LogTimeCommand
+    {
+        public EntryCommand() : base(TimeRecordType.Entry)
+        {
+        }
+    }
+
+    [Verb("exit", HelpText = "Register an exit record.")]
+    public class ExitCommand : LogTimeCommand
+    {
+        public ExitCommand() : base(TimeRecordType.Exit)
+        {
+        }
+    }
+
+    [Verb("history", HelpText = "All time records.")]
+    public class HistoryCommand
+    {
+    }
+
+    [Verb("summary", HelpText = "Summary of the entire base.")]
+    public class SummaryCommand
+    {
     }
 }
