@@ -88,7 +88,9 @@ namespace Integrations
                 inputLogOut.SendKeys(time);
             }
 
-            driver.FindElement(By.XPath(PageWorkLog.ButtonSubmit)).Click();
+            var divIndex = driver.FindElements(By.XPath("/html/body/div[2]/div/div/div")).Count;
+
+            driver.FindElement(By.XPath(PageWorkLog.ButtonSubmit(divIndex))).Click();
             Thread.Sleep(2000);
 
             driver.Quit();
@@ -113,7 +115,11 @@ namespace Integrations
         private static readonly int EXIT_AUX = 3;
 
         public static string H2ReferenceDate = "//*[@id=\"content\"]/div/div/div[2]/div/h2";
-        public static string ButtonSubmit = "//*[@id=\"content\"]/div/div/div[8]/div/button";
+        private static string buttonSubmitSample = "//*[@id=\"content\"]/div/div/div[{{div_index}}]/div/button";
+
+        public static string ButtonSubmit(int divIndex) {
+            return buttonSubmitSample.Replace("{{div_index}}", divIndex.ToString());
+        }
 
         public static string InputLogIn(int lineIndex = 0)
         {
