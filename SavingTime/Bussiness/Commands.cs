@@ -104,4 +104,9 @@ namespace SavingTime.Bussiness
     public class SummaryCommand
     {
     }
+
+    [Verb("test", HelpText = "Test browser integration.")]
+    public class TestIntegrationCommand
+    {
+    }
 }

@@ -2,6 +2,7 @@
 using Integrations;
 using SavingTime.Data;
 using SavingTime.Entities;
+using System;
 using System.Linq;
 
 namespace SavingTime.Bussiness
@@ -46,7 +47,8 @@ namespace SavingTime.Bussiness
                     EntryCommand,
                     ExitCommand,
                     HistoryCommand,
-                    SummaryCommand
+                    SummaryCommand,
+                    TestIntegrationCommand
                 >(stdin)
                 .WithParsed(o =>
                 {
@@ -63,6 +65,9 @@ namespace SavingTime.Bussiness
                             break;
                         case SummaryCommand:
                             ShowSummary();
+                            break;
+                        case TestIntegrationCommand:
+                            TestBrowserIntegration();
                             break;
                     }
                 });
@@ -106,6 +111,29 @@ namespace SavingTime.Bussiness
             Console.WriteLine($"{o.TypeRecord} Registered");
         }
 
+        public void TestBrowserIntegration()
+        {
+            Console.WriteLine("Testing Browser integration\n");
+
+            var config = new LacunaConfiguration(
+                "carlosb",
+                "Henrique0428!",
+                "Carlos Beralde",
+                DateTime.Now,
+                ""
+            );
+            var interation = new LacunaIntegration(config);
+            try
+            {
+                interation.Test();
+                Console.WriteLine("Browser integration test sucessed");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Browser integration test FAILED");
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
 
         public void History()
         {
@@ -128,6 +156,21 @@ namespace SavingTime.Bussiness
         }
 
         public void ShowSummary()
+        {
+            var now = DateTime.Now;
+            var list = _dbContext
+                .TimeRecords
+                .Where(t => t.Time < new DateTime(now.Year, now.Month, now.Day, 0, 0, 0))
+                .OrderBy((t) => t.Time)
+                .ToList();
+
+            Console.WriteLine("Summary:\n");
+            var summary = Summary.FromTimeRecordList(list);
+
+            Console.WriteLine(summary.ToString());
+        }
+
+        public void TestIntegration()
         {
             var now = DateTime.Now;
             var list = _dbContext

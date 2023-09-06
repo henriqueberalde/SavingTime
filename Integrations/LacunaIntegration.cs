@@ -37,6 +37,15 @@ namespace Integrations
             Configuration = config;
         }
 
+        public void Test()
+        {
+            var url = "https://ponto.lacunasoftware.com/#/home";
+
+            driver.Navigate().GoToUrl(url);
+            Thread.Sleep(2000);
+            driver.Quit();
+        }
+
         public void Login()
         {
             var url = "https://ponto.lacunasoftware.com/#/home";
