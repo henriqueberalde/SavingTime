@@ -33,6 +33,7 @@ A tool to store time records at work
 - [x] Context
 - [x] Add context to time record
 - [x] Integrate with Lacuna Web App for log work
+- [ ] Add command to view total hours by day (query already created) or put it inside the summary
 - [ ] Internalize database with SqLite to install db with the application
 - [ ] Setup Intalation for the console application on windows
 - [ ] Unit Tests
