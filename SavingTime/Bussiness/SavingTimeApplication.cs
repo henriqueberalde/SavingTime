@@ -2,8 +2,6 @@
 using Integrations;
 using SavingTime.Data;
 using SavingTime.Entities;
-using System;
-using System.Linq;
 
 namespace SavingTime.Bussiness
 {
@@ -44,6 +42,7 @@ namespace SavingTime.Bussiness
                 var stdin = line.Split(' ');
 
                 Parser.Default.ParseArguments<
+                    DoCommand,
                     EntryCommand,
                     ExitCommand,
                     HistoryCommand,
@@ -60,6 +59,9 @@ namespace SavingTime.Bussiness
                         case ExitCommand:
                             RegisterTimeRecord((ExitCommand) o);
                             break;
+                        case DoCommand:
+                            DecideCommand();
+                            break;
                         case HistoryCommand:
                             History();
                             break;
@@ -72,6 +74,19 @@ namespace SavingTime.Bussiness
                     }
                 });
             }
+        }
+
+        public void DecideCommand()
+        {
+            var record = _dbContext.TimeRecords.OrderByDescending(r => r.Time).First();
+            var lastType = record?.Type ?? TimeRecordType.Exit;
+            LogTimeCommand command = new EntryCommand();
+
+            if (lastType == TimeRecordType.Entry) {
+                command = new ExitCommand();
+            }
+
+            RegisterTimeRecord(command);
         }
 
         public void RegisterTimeRecord(LogTimeCommand o)

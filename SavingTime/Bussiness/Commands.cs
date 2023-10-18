@@ -95,6 +95,11 @@ namespace SavingTime.Bussiness
         }
     }
 
+    [Verb("do", HelpText = "Register an entry or exit record, depends on the last command done. If it was an entry then now would be an exit.")]
+    public class DoCommand
+    {
+    }
+
     [Verb("history", HelpText = "All time records.")]
     public class HistoryCommand
     {
