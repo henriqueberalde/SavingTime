@@ -8,6 +8,7 @@ namespace SavingTime.Bussiness
         private readonly int _minHour;
         private readonly int _maxHour;
 
+        public int? Number { get; set; } = null;
         public List<SummaryItem> Items { get; set; }
 
         public Summary(List<SummaryItem> items, int minHour, int maxHour)
@@ -48,7 +49,13 @@ namespace SavingTime.Bussiness
             result.Append(ToStringHeader(_minHour, _maxHour));
             result.Append("\n");
 
-            foreach (var item in Items)
+            var list = Items;
+
+            if (Number.HasValue) {
+                list = list.TakeLast(Number.Value).ToList();
+            }
+
+            foreach (var item in list)
             {
                 result.Append(item.ToString(_minHour, _maxHour));
                 result.Append("\n");

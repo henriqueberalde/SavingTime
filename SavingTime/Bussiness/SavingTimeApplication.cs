@@ -24,7 +24,7 @@ namespace SavingTime.Bussiness
 
             try
             {
-                ShowSummary();
+                ShowSummary(new SummaryCommand());
             }
             catch (Exception)
             {
@@ -67,7 +67,7 @@ namespace SavingTime.Bussiness
                             ShowInfo();
                             break;
                         case SummaryCommand:
-                            ShowSummary();
+                            ShowSummary((SummaryCommand)o);
                             break;
                         case HistoryCommand:
                             History();
@@ -162,7 +162,7 @@ namespace SavingTime.Bussiness
             ShowTimeRecorList(list);
         }
 
-        public void ShowSummary()
+        public void ShowSummary(SummaryCommand o)
         {
             var now = DateTime.Now;
             var list = _dbContext
@@ -173,6 +173,7 @@ namespace SavingTime.Bussiness
 
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
+            summary.Number = o.ParsedNumber();
 
             Console.WriteLine(summary.ToString());
         }
