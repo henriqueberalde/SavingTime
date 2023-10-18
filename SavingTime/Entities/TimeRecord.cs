@@ -20,6 +20,7 @@
 
         public override string ToString()
         {
+            string typeInfo = Type == TimeRecordType.Exit ? $"{Type} " : Type.ToString();
             var context = "";
 
             if (Context is not null)
@@ -27,7 +28,7 @@
                 context = $"[{Context}] ";
             }
 
-            return $"{context}{Type} - {Time}";
+            return $"{context}{typeInfo} - {Time}";
         }
     }
 

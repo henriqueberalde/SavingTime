@@ -29,7 +29,7 @@ namespace SavingTime.Bussiness
             catch (Exception)
             {
                 Console.Write("Error on Summary");
-            }            
+            }
 
             while (true)
             {
@@ -45,28 +45,32 @@ namespace SavingTime.Bussiness
                     DoCommand,
                     EntryCommand,
                     ExitCommand,
-                    HistoryCommand,
+                    InfoCommand,
                     SummaryCommand,
+                    HistoryCommand,
                     TestIntegrationCommand
                 >(stdin)
                 .WithParsed(o =>
                 {
                     switch (o)
                     {
+                        case DoCommand:
+                            DecideCommand();
+                            break;
                         case EntryCommand:
                             RegisterTimeRecord((EntryCommand)o);
                             break;
                         case ExitCommand:
-                            RegisterTimeRecord((ExitCommand) o);
+                            RegisterTimeRecord((ExitCommand)o);
                             break;
-                        case DoCommand:
-                            DecideCommand();
-                            break;
-                        case HistoryCommand:
-                            History();
+                        case InfoCommand:
+                            ShowInfo();
                             break;
                         case SummaryCommand:
                             ShowSummary();
+                            break;
+                        case HistoryCommand:
+                            History();
                             break;
                         case TestIntegrationCommand:
                             TestBrowserIntegration();
@@ -124,6 +128,7 @@ namespace SavingTime.Bussiness
             }
 
             Console.WriteLine($"{o.TypeRecord} Registered");
+            ShowInfo();
         }
 
         public void TestBrowserIntegration()
@@ -152,22 +157,9 @@ namespace SavingTime.Bussiness
 
         public void History()
         {
-            var query = _dbContext.TimeRecords.OrderBy((t) => t.Time);
-
+            var list = _dbContext.TimeRecords.OrderBy((t) => t.Time);
             Console.WriteLine("All TimeRecords from data base:\n");
-
-            foreach (var item in query)
-            {
-                ConsoleColor color;
-                if (item.Type == TimeRecordType.Entry)
-                    color = ConsoleColor.Green;
-                else
-                    color = ConsoleColor.Red;
-
-                Console.ForegroundColor = color;
-                Console.WriteLine(item.ToString());
-                Console.ResetColor();
-            }
+            ShowTimeRecorList(list);
         }
 
         public void ShowSummary()
@@ -185,19 +177,31 @@ namespace SavingTime.Bussiness
             Console.WriteLine(summary.ToString());
         }
 
-        public void TestIntegration()
-        {
+        public void ShowInfo() {
             var now = DateTime.Now;
-            var list = _dbContext
-                .TimeRecords
-                .Where(t => t.Time < new DateTime(now.Year, now.Month, now.Day, 0, 0, 0))
-                .OrderBy((t) => t.Time)
-                .ToList();
+            var list = _dbContext.TimeRecords
+                .Where(t =>
+                    t.Time.Year == now.Year &&
+                    t.Time.Month == now.Month &&
+                    t.Time.Day == now.Day
+                ).OrderBy((t) => t.Time);
+            ShowTimeRecorList(list);
+        }
 
-            Console.WriteLine("Summary:\n");
-            var summary = Summary.FromTimeRecordList(list);
+        public void ShowTimeRecorList(IEnumerable<TimeRecord> list)
+        {
+            foreach (var time in list)
+            {
+                ConsoleColor color;
+                if (time.Type == TimeRecordType.Entry)
+                    color = ConsoleColor.Green;
+                else
+                    color = ConsoleColor.Red;
 
-            Console.WriteLine(summary.ToString());
+                Console.ForegroundColor = color;
+                Console.WriteLine(time.ToString());
+                Console.ResetColor();
+            }
         }
     }
 }

@@ -100,6 +100,11 @@ namespace SavingTime.Bussiness
     {
     }
 
+    [Verb("info", HelpText = "Show informations about the day.")]
+    public class InfoCommand
+    {
+    }
+
     [Verb("history", HelpText = "All time records.")]
     public class HistoryCommand
     {
