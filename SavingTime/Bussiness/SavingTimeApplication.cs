@@ -82,8 +82,7 @@ namespace SavingTime.Bussiness
 
         public void DecideCommand()
         {
-            var record = _dbContext.TimeRecords.OrderByDescending(r => r.Time).First();
-            var lastType = record?.Type ?? TimeRecordType.Exit;
+            var lastType = LastType() ?? TimeRecordType.Exit;
             LogTimeCommand command = new EntryCommand();
 
             if (lastType == TimeRecordType.Entry) {
@@ -167,9 +166,12 @@ namespace SavingTime.Bussiness
             var now = DateTime.Now;
             var list = _dbContext
                 .TimeRecords
-                .Where(t => t.Time < new DateTime(now.Year, now.Month, now.Day, 0, 0, 0))
                 .OrderBy((t) => t.Time)
                 .ToList();
+
+            if (LastType() == TimeRecordType.Entry) {
+                list.Add(new TimeRecord(DateTime.Now, TimeRecordType.Exit, null));
+            }
 
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
@@ -203,6 +205,10 @@ namespace SavingTime.Bussiness
                 Console.WriteLine(time.ToString());
                 Console.ResetColor();
             }
+        }
+
+        private TimeRecordType? LastType() {
+            return _dbContext.TimeRecords.OrderByDescending(r => r.Time).FirstOrDefault()?.Type;
         }
     }
 }
