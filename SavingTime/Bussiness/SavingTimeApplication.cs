@@ -176,7 +176,6 @@ namespace SavingTime.Bussiness
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
             summary.Number = o.ParsedNumber();
-
             Console.WriteLine(summary.ToString());
         }
 

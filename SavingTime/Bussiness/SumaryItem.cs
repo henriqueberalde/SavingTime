@@ -80,11 +80,11 @@ namespace SavingTime.Bussiness
 
             for (int i = min; i <= max; i++)
             {
-                for (int j = 1; j <= 3; j++)
+                for (int j = 1; j <= 6; j++)
                 {
                     if (Fractions.Contains($"{i.ToString("D2")}_{j}"))
                     {
-                        result.Append("_");
+                        result.Append("\u2588");
                         continue;
                     }
 

@@ -58,7 +58,7 @@ namespace SavingTime.Bussiness
             foreach (var item in list)
             {
                 result.Append(item.ToString(_minHour, _maxHour));
-                result.Append("\n");
+                result.Append("\n\n");
             }
 
             return result.ToString();
@@ -71,7 +71,7 @@ namespace SavingTime.Bussiness
 
             while (currentHour <= _maxHour)
             {
-                timeList.Append($"{currentHour.ToString("D2")} ");
+                timeList.Append($"[ {currentHour.ToString("D2")} ]");
                 currentHour += 1;
             }
 

@@ -37,7 +37,7 @@
             while(End.IsGraterThan(currentTime))
             {
                 result.Add(currentTime.ToFraction());
-                currentTime.AddMinutes(21);
+                currentTime.AddMinutes(10);
             }
 
             return result;

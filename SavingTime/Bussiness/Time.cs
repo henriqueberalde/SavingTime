@@ -54,10 +54,13 @@ namespace SavingTime.Bussiness
 
         private string FractionFromMinute()
         {
-            if (Minute >= 0 && Minute <= 20) return "1";
-            if (Minute >= 21 && Minute <= 40) return "2";
+            if (Minute >= 0 && Minute <= 9) return "1";
+            if (Minute >= 10 && Minute <= 19) return "2";
+            if (Minute >= 20 && Minute <= 29) return "3";
+            if (Minute >= 30 && Minute <= 39) return "4";
+            if (Minute >= 40 && Minute <= 49) return "5";
             
-            return "3";
+            return "6";
         }
 
         public bool IsGraterThan(Time other)
