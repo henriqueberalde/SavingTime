@@ -35,7 +35,7 @@ A tool to store time records at work
 - [x] Integrate with Lacuna Web App for log work
 - [x] Add a generic command to decide if it is entry or exit
 - [x] After register a time show the time and some information about that day
-- [ ] Add command to view total hours by day (query already created) or put it inside the summary
+- [ ] Add command to view total hours by day (query already created) or put it inside the summary (round total day on removing the seconds)
 - [ ] Add a feature to track issues time spent
 - [ ] Internalize database with SqLite to install db with the application
 - [ ] Setup Instalation for the console application on windows
