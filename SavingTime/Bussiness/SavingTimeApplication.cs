@@ -163,11 +163,22 @@ namespace SavingTime.Bussiness
 
         public void ShowSummary(SummaryCommand o)
         {
-            var now = DateTime.Now;
-            var list = _dbContext
-                .TimeRecords
-                .OrderBy((t) => t.Time)
-                .ToList();
+            var number = o.ParsedNumber();
+            var query = _dbContext.TimeRecords.AsQueryable();
+
+            if (number.HasValue) {
+                var alldays = _dbContext.TimeRecords
+                    .GroupBy(tr => tr.Time.Date)
+                    .Select(r => r.Key)
+                    .ToList();
+                alldays.Sort();
+                alldays.TakeLast(number.Value);
+
+                var filterDate = DateTime.Now.AddDays((number.Value - 1)*-1).Date;
+                query = _dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
+            }
+
+            var list = query.OrderBy((t) => t.Time).ToList();
 
             if (LastType() == TimeRecordType.Entry) {
                 list.Add(new TimeRecord(DateTime.Now, TimeRecordType.Exit, null));
@@ -175,7 +186,6 @@ namespace SavingTime.Bussiness
 
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
-            summary.Number = o.ParsedNumber();
             Console.WriteLine(summary.ToString());
         }
 
