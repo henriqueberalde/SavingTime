@@ -12,9 +12,12 @@ namespace SavingTime
         {
             IHost _host = Host.CreateDefaultBuilder().ConfigureServices(services => {
                 
-                services.AddSingleton<ISavingTimeApplication, SavingTimeApplication>();
+                services.AddScoped<ISavingTimeApplication, SavingTimeApplication>();
                 services.AddSingleton<SavingTimeDbContext, SavingTimeDbContext>();
                 services.AddSingleton<DbContext, SavingTimeDbContext>();
+
+                services.AddScoped<TimeService>();
+                services.AddScoped<IssueService>();
 
             }).Build();
 

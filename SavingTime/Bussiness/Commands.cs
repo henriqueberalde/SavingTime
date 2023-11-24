@@ -95,9 +95,25 @@ namespace SavingTime.Bussiness
         }
     }
 
+    [Verb("issue", HelpText = "Register an issue entry.")]
+    public class IssueCommand
+    {
+        public TimeRecordType TypeRecord { get; set; }
+
+        [Value(0, Required = true, HelpText = "Issue's identifier.")]
+        public string? Issue { get; set; }
+
+        public IssueCommand()
+        {
+            TypeRecord = TimeRecordType.Entry;
+        }
+    }
+
     [Verb("do", HelpText = "Register an entry or exit record, depends on the last command done. If it was an entry then now would be an exit.")]
     public class DoCommand
     {
+        [Value(0, Required = false, HelpText = "Context")]
+        public string? Context { get; set; }
     }
 
     [Verb("info", HelpText = "Show informations about the day.")]

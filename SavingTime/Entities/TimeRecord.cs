@@ -1,20 +1,15 @@
 ﻿namespace SavingTime.Entities
 {
-    public class TimeRecord
+    public class TimeRecord : BaseTimeRecord
     {
-        public int Id { get; set; }
-        public DateTime Time { get; set; }
-        public TimeRecordType Type { get; set; }
         public string? Context { get; set; }
 
         public TimeRecord(
             DateTime time,
             TimeRecordType type,
             string? context
-        )
+        ) : base(time, type)
         {
-            Time = time;
-            Type = type;
             Context = context;
         }
 
@@ -30,11 +25,5 @@
 
             return $"{context}{typeInfo} - {Time}";
         }
-    }
-
-    public enum TimeRecordType
-    {
-        Entry = 1,
-        Exit = 2
     }
 }

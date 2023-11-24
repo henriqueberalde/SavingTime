@@ -11,5 +11,6 @@ namespace SavingTime.Data
         }
 
         public DbSet<TimeRecord> TimeRecords { get; set; }
+        public DbSet<IssueRecord> IssueRecords { get; set; }
     }
 }

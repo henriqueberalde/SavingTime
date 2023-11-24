@@ -12,11 +12,13 @@ namespace SavingTime.Bussiness
 
     public class SavingTimeApplication : ISavingTimeApplication
     {
-        private readonly SavingTimeDbContext _dbContext;
+        private readonly SavingTimeDbContext dbContext;
+        private readonly IssueService issueService;
 
-        public SavingTimeApplication(SavingTimeDbContext dbContext)
+        public SavingTimeApplication(SavingTimeDbContext dbContext, IssueService issueService)
         {
-            _dbContext = dbContext;
+            this.dbContext = dbContext;
+            this.issueService = issueService;
         }
         public void Run()
         {
@@ -45,6 +47,7 @@ namespace SavingTime.Bussiness
                     DoCommand,
                     EntryCommand,
                     ExitCommand,
+                    IssueCommand,
                     InfoCommand,
                     SummaryCommand,
                     HistoryCommand,
@@ -55,7 +58,10 @@ namespace SavingTime.Bussiness
                     switch (o)
                     {
                         case DoCommand:
-                            DecideCommand();
+                            DecideCommand((DoCommand)o);
+                            break;
+                        case IssueCommand:
+                            RegisterIssueRecord((IssueCommand)o);
                             break;
                         case EntryCommand:
                             RegisterTimeRecord((EntryCommand)o);
@@ -80,7 +86,7 @@ namespace SavingTime.Bussiness
             }
         }
 
-        public void DecideCommand()
+        public void DecideCommand(DoCommand o)
         {
             var lastType = LastType() ?? TimeRecordType.Exit;
             LogTimeCommand command = new EntryCommand();
@@ -89,7 +95,14 @@ namespace SavingTime.Bussiness
                 command = new ExitCommand();
             }
 
+            command.Context = o.Context;
             RegisterTimeRecord(command);
+        }
+
+        public void RegisterIssueRecord(IssueCommand o)
+        {
+            var dateTime = DateTime.Now;
+            issueService.AddIssueEntry(dateTime, o.Issue);
         }
 
         public void RegisterTimeRecord(LogTimeCommand o)
@@ -100,8 +113,13 @@ namespace SavingTime.Bussiness
                 o.TypeRecord,
                 o.Context
             );
-            _dbContext.TimeRecords.Add(timeRecord);
-            _dbContext.SaveChanges();
+            dbContext.TimeRecords.Add(timeRecord);
+            dbContext.SaveChanges();
+
+            if (!string.IsNullOrEmpty(o.Context))
+            {
+                issueService.AddIssueEntry(dateTime, o.Context);
+            }
 
             if (!o.CancelIntegration)
             {
@@ -117,7 +135,7 @@ namespace SavingTime.Bussiness
 
                 var todayInitial = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
                 var todayEnd = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 23, 59, 59);
-                var line = _dbContext.TimeRecords.Where(t => t.Time >= todayInitial && t.Time <= todayEnd && t.Type == o.TypeRecord).Count() - 1;
+                var line = dbContext.TimeRecords.Where(t => t.Time >= todayInitial && t.Time <= todayEnd && t.Type == o.TypeRecord).Count() - 1;
 
                 interation.Login();
                 interation.LogWork(
@@ -156,7 +174,7 @@ namespace SavingTime.Bussiness
 
         public void History()
         {
-            var list = _dbContext.TimeRecords.OrderBy((t) => t.Time);
+            var list = dbContext.TimeRecords.OrderBy((t) => t.Time);
             Console.WriteLine("All TimeRecords from data base:\n");
             ShowTimeRecorList(list);
         }
@@ -164,10 +182,10 @@ namespace SavingTime.Bussiness
         public void ShowSummary(SummaryCommand o)
         {
             var number = o.ParsedNumber();
-            var query = _dbContext.TimeRecords.AsQueryable();
+            var query = dbContext.TimeRecords.AsQueryable();
 
             if (number.HasValue) {
-                var alldays = _dbContext.TimeRecords
+                var alldays = dbContext.TimeRecords
                     .GroupBy(tr => tr.Time.Date)
                     .Select(r => r.Key)
                     .ToList();
@@ -175,7 +193,7 @@ namespace SavingTime.Bussiness
                 alldays.TakeLast(number.Value);
 
                 var filterDate = DateTime.Now.AddDays((number.Value - 1)*-1).Date;
-                query = _dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
+                query = dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
             }
 
             var list = query.OrderBy((t) => t.Time).ToList();
@@ -191,7 +209,7 @@ namespace SavingTime.Bussiness
 
         public void ShowInfo() {
             var now = DateTime.Now;
-            var list = _dbContext.TimeRecords
+            var list = dbContext.TimeRecords
                 .Where(t =>
                     t.Time.Year == now.Year &&
                     t.Time.Month == now.Month &&
@@ -217,7 +235,7 @@ namespace SavingTime.Bussiness
         }
 
         private TimeRecordType? LastType() {
-            return _dbContext.TimeRecords.OrderByDescending(r => r.Time).FirstOrDefault()?.Type;
+            return dbContext.TimeRecords.OrderByDescending(r => r.Time).FirstOrDefault()?.Type;
         }
     }
 }
