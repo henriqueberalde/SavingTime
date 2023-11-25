@@ -13,12 +13,17 @@ namespace SavingTime.Bussiness
     public class SavingTimeApplication : ISavingTimeApplication
     {
         private readonly SavingTimeDbContext dbContext;
+        private readonly TimeService timeService;
         private readonly IssueService issueService;
 
-        public SavingTimeApplication(SavingTimeDbContext dbContext, IssueService issueService)
+        public SavingTimeApplication(
+            SavingTimeDbContext dbContext,
+            IssueService issueService,
+            TimeService timeService)
         {
             this.dbContext = dbContext;
             this.issueService = issueService;
+            this.timeService = timeService;
         }
         public void Run()
         {
@@ -102,7 +107,7 @@ namespace SavingTime.Bussiness
         public void RegisterIssueRecord(IssueCommand o)
         {
             var dateTime = DateTime.Now;
-            issueService.AddIssueEntry(dateTime, o.Issue);
+            issueService.Entry(dateTime, o.Issue);
         }
 
         public void RegisterTimeRecord(LogTimeCommand o)
@@ -113,13 +118,8 @@ namespace SavingTime.Bussiness
                 o.TypeRecord,
                 o.Context
             );
-            dbContext.TimeRecords.Add(timeRecord);
-            dbContext.SaveChanges();
 
-            if (!string.IsNullOrEmpty(o.Context))
-            {
-                issueService.AddIssueEntry(dateTime, o.Context);
-            }
+            timeService.Add(timeRecord);
 
             if (!o.CancelIntegration)
             {

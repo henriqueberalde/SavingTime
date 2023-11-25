@@ -6,45 +6,48 @@ namespace SavingTime.Bussiness
     public class IssueService
     {
         private readonly SavingTimeDbContext dbContext;
-        private readonly TimeService timeService;
 
-        public IssueService(SavingTimeDbContext dbContext, TimeService timeService)
+        public IssueService(SavingTimeDbContext dbContext)
         {
             this.dbContext = dbContext;
-            this.timeService = timeService;
         }
 
-        public void AddIssueEntry(DateTime dateTime, string issue)
+        public void Entry(DateTime dateTime, string issue)
         {
-            if (!timeService.IsWorking())
-            {
-                throw new Exception("Cannot add issue while out of work");
-            }
             var lastIssue = lastIssueRecord();
 
             if (lastIssue is not null && lastIssue.Type == TimeRecordType.Entry)
             {
-                addIssue(new IssueRecord(dateTime, TimeRecordType.Exit, lastIssue.Issue));
+                Add(new IssueRecord(dateTime, TimeRecordType.Exit, lastIssue.Issue));
             }
 
-            addIssue(new IssueRecord(dateTime, TimeRecordType.Entry, issue));
+            Add(new IssueRecord(dateTime, TimeRecordType.Entry, issue));
         }
 
-        public void AddIssueExit(DateTime dateTime, string issue)
+        public void Add(IssueRecord issue)
         {
-            if (string.IsNullOrEmpty(issue))
-            {
-                throw new Exception("issue must have value");
-            }
+            validateRecordsIntegrityForType(issue.Type);
 
-            addIssue(new IssueRecord(dateTime, TimeRecordType.Exit, issue));
-        }
-
-        private void addIssue(IssueRecord issue)
-        {
             dbContext.Add(issue);
             dbContext.SaveChanges();
-            Console.WriteLine($"Issue {issue} {issue.Type.ToString()} Registered");
+            Console.WriteLine($"Issue {issue.Issue} {issue.Type} Registered");
+        }
+
+        public void validateRecordsIntegrityForType(TimeRecordType type)
+        {
+            var lastIssue = LastIssue();
+
+            if (lastIssue is not null && lastIssue.Type == type)
+            {
+                throw new RecordIntegrityViolationException($"Can't add an issue of type {type} because it was the last type added");
+            }
+        }
+
+        public IssueRecord? LastIssue()
+        {
+            return dbContext.IssueRecords
+                .OrderByDescending(i => i.Time)
+                .FirstOrDefault();
         }
 
         private IssueRecord? lastIssueRecord()
