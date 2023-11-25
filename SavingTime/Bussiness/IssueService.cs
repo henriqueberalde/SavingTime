@@ -47,6 +47,7 @@ namespace SavingTime.Bussiness
         {
             return dbContext.IssueRecords
                 .OrderByDescending(i => i.Time)
+                .ThenByDescending(i => i.Id)
                 .FirstOrDefault();
         }
 
