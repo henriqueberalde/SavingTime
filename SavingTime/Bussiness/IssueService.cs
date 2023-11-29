@@ -14,7 +14,7 @@ namespace SavingTime.Bussiness
 
         public void Entry(DateTime dateTime, string issue)
         {
-            var lastIssue = lastIssueRecord();
+            var lastIssue = LastIssue();
 
             if (lastIssue is not null && lastIssue.Type == TimeRecordType.Entry)
             {
@@ -49,11 +49,6 @@ namespace SavingTime.Bussiness
                 .OrderByDescending(i => i.Time)
                 .ThenByDescending(i => i.Id)
                 .FirstOrDefault();
-        }
-
-        private IssueRecord? lastIssueRecord()
-        {
-            return dbContext.IssueRecords.OrderByDescending(t => t.Time).FirstOrDefault();
         }
     }
 }

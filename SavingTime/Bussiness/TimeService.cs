@@ -54,7 +54,10 @@ namespace SavingTime.Bussiness
 
         public bool IsWorking()
         {
-            return dbContext.TimeRecords.OrderByDescending(t => t.Time).First().Type == Entities.TimeRecordType.Entry;
+            return dbContext.TimeRecords
+                .OrderByDescending(t => t.Time)
+                .ThenByDescending(t => t.Id)
+                .First().Type == Entities.TimeRecordType.Entry;
         }
     }
 }

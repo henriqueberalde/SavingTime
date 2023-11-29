@@ -174,7 +174,9 @@ namespace SavingTime.Bussiness
 
         public void History()
         {
-            var list = dbContext.TimeRecords.OrderBy((t) => t.Time);
+            var list = dbContext.TimeRecords
+                .OrderBy((t) => t.Time)
+                .ThenByDescending(t => t.Id);
             Console.WriteLine("All TimeRecords from data base:\n");
             ShowTimeRecorList(list);
         }
@@ -196,7 +198,10 @@ namespace SavingTime.Bussiness
                 query = dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
             }
 
-            var list = query.OrderBy((t) => t.Time).ToList();
+            var list = query
+                .OrderBy(t => t.Time)
+                .ThenByDescending(t => t.Id)
+                .ToList();
 
             if (LastType() == TimeRecordType.Entry) {
                 list.Add(new TimeRecord(DateTime.Now, TimeRecordType.Exit, null));
@@ -214,7 +219,8 @@ namespace SavingTime.Bussiness
                     t.Time.Year == now.Year &&
                     t.Time.Month == now.Month &&
                     t.Time.Day == now.Day
-                ).OrderBy((t) => t.Time);
+                ).OrderBy(t => t.Time)
+                .ThenByDescending(t => t.Id);
             ShowTimeRecorList(list);
         }
 
@@ -235,7 +241,10 @@ namespace SavingTime.Bussiness
         }
 
         private TimeRecordType? LastType() {
-            return dbContext.TimeRecords.OrderByDescending(r => r.Time).FirstOrDefault()?.Type;
+            return dbContext.TimeRecords
+                .OrderByDescending(r => r.Time)
+                .ThenByDescending(t => t.Id)
+                .FirstOrDefault()?.Type;
         }
     }
 }
