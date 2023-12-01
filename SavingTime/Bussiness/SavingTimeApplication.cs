@@ -210,6 +210,13 @@ namespace SavingTime.Bussiness
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
             Console.WriteLine(summary.ToString());
+
+            var issues = dbContext.IssueRecords
+                .OrderBy(t => t.Time)
+                .ThenByDescending(t => t.Id)
+                .ToList();
+
+            new IssueService(dbContext).Summary(issues);
         }
 
         public void ShowInfo() {

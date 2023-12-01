@@ -50,5 +50,40 @@ namespace SavingTime.Bussiness
                 .ThenByDescending(i => i.Id)
                 .FirstOrDefault();
         }
+
+        public void Summary(List<IssueRecord> list)
+        {
+            foreach (var groupItem in list.GroupBy(r => new { r.Time.Date, r.Issue }))
+            {
+                var slices = new List<TimeSpan>();
+                var items = groupItem.OrderBy(r => r.Time).ThenByDescending(r => r.Id);
+                DateTime? currentBeginDateTime = null;
+
+                foreach (var record in items)
+                {
+                    if (record.Type == TimeRecordType.Entry)
+                    {
+                        currentBeginDateTime = record.Time;
+                    }
+                    else
+                    {
+                        if (!currentBeginDateTime.HasValue)
+                            throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key:yyyy/MM/dd}.");
+
+                        var timeSpan = record.Time - currentBeginDateTime.Value;
+                        slices.Add(timeSpan);
+                    }
+                }
+
+                var a = new TimeSpan();
+                var b = new TimeSpan();
+                var c = a + b;
+                TimeSpan totalInTimeSpan = new TimeSpan();
+                slices.ForEach(s => totalInTimeSpan += s);
+                decimal totalHoursInDecimal = (decimal)slices.Sum(s => s.TotalHours);
+
+                Console.WriteLine($"{groupItem.Key.Date.ToString("yyyy/MM/dd")} ({groupItem.Key.Issue}) - {totalInTimeSpan.Hours}:{totalInTimeSpan.Minutes}:{totalInTimeSpan.Seconds} - {totalHoursInDecimal.ToString("N2")}");
+            }
+        }
     }
 }
