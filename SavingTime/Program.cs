@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness;
 using SavingTime.Data;
+using System.Globalization;
 
 namespace SavingTime
 {
@@ -10,6 +11,7 @@ namespace SavingTime
     {
         static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
             IHost _host = Host.CreateDefaultBuilder().ConfigureServices(services => {
                 
                 services.AddScoped<ISavingTimeApplication, SavingTimeApplication>();

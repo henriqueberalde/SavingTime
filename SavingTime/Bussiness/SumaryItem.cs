@@ -92,7 +92,7 @@ namespace SavingTime.Bussiness
                 }
             }
 
-            result.Append($"| {Total.Hours.ToString("D2")}:{Total.Minutes.ToString("D2")}");
+            result.Append($"| {Total.Hours.ToString("D2")}:{Total.Minutes.ToString("D2")} ({string.Format("{0:00.00}", (decimal)Total.TotalHours)})");
 
             return result.ToString();
         }

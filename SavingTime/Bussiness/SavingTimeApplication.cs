@@ -33,9 +33,10 @@ namespace SavingTime.Bussiness
             {
                 ShowSummary(new SummaryCommand());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Console.Write("Error on Summary");
+                Console.Write(ex.Message);
             }
 
             while (true)
@@ -106,13 +107,27 @@ namespace SavingTime.Bussiness
 
         public void RegisterIssueRecord(IssueCommand o)
         {
-            var dateTime = DateTime.Now;
+            var now = DateTime.Now;
+            var dateTime = new DateTime(
+                now.Year,
+                now.Month,
+                now.Day,
+                now.Hour,
+                now.Minute,
+                0);
             issueService.Entry(dateTime, o.Issue);
         }
 
         public void RegisterTimeRecord(LogTimeCommand o)
         {
-            var dateTime = o.DateTimeConverted ?? DateTime.Now;
+            var now = DateTime.Now;
+            var dateTime = o.DateTimeConverted ?? new DateTime(
+                now.Year,
+                now.Month,
+                now.Day,
+                now.Hour,
+                now.Minute,
+                0);
             var timeRecord = new TimeRecord(
                 dateTime,
                 o.TypeRecord,

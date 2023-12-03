@@ -82,7 +82,7 @@ namespace SavingTime.Bussiness
                 slices.ForEach(s => totalInTimeSpan += s);
                 decimal totalHoursInDecimal = (decimal)slices.Sum(s => s.TotalHours);
 
-                Console.WriteLine($"{groupItem.Key.Date.ToString("yyyy/MM/dd")} ({groupItem.Key.Issue}) - {totalInTimeSpan.Hours}:{totalInTimeSpan.Minutes}:{totalInTimeSpan.Seconds} - {totalHoursInDecimal.ToString("N2")}");
+                Console.WriteLine($"{groupItem.Key.Date.ToString("yyyy/MM/dd")} [{groupItem.Key.Issue}] - {totalInTimeSpan.Hours}:{totalInTimeSpan.Minutes} - {totalHoursInDecimal.ToString("N2")}");
             }
         }
     }
