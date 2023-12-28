@@ -91,8 +91,10 @@ namespace SavingTime.Bussiness
                     result.Append(" ");
                 }
             }
+            var diff = TimeSpan.FromHours(-8) + Total;
+            var diffStr = diff.TotalHours < 0 ? $"{diff}" : $" {diff}";
 
-            result.Append($"| {Total.Hours.ToString("D2")}:{Total.Minutes.ToString("D2")} ({string.Format("{0:00.00}", (decimal)Total.TotalHours)})");
+            result.Append($"| {Total.Hours.ToString("D2")}:{Total.Minutes.ToString("D2")} ({string.Format("{0:00.00}", (decimal)Total.TotalHours)}) | {diffStr}");
 
             return result.ToString();
         }

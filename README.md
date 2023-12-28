@@ -36,6 +36,11 @@ A tool to store time records at work
 - [x] Add a generic command to decide if it is entry or exit
 - [x] After register a time show the time and some information about that day
 - [x] Add a feature to track issues time spent
+- [ ] Choose one day in Info command
+- [ ] Show Issue Summary separated from Time Records Summary
+- [ ] Sum Total Diff and Total hours of the month
+- [ ] Choose one month on summary Time Records and Issue (make current month as default)
+
 - [ ] Add version per build (to see if the deploy was done successfully)
 - [ ] Add balance per month / week / full
 

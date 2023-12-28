@@ -70,7 +70,7 @@ namespace SavingTime.Bussiness
                 currentHour += 1;
             }
 
-            return $"DATE  |{timeList}| TOTAL";
+            return $"DATE  |{timeList}| TOTAL         | DIFF";
         }
     }
 }
