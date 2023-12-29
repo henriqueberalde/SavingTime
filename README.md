@@ -36,21 +36,21 @@ A tool to store time records at work
 - [x] Add a generic command to decide if it is entry or exit
 - [x] After register a time show the time and some information about that day
 - [x] Add a feature to track issues time spent
-- [ ] Choose one day in Info command
+- [x] Add command to view total hours by day in summary view
+- [x] Add diff on summary view (-8h + totalhours)
+- [ ] Choose one day in info command
+- [ ] Show issue info in info command
 - [ ] Show Issue Summary separated from Time Records Summary
-- [ ] Sum Total Diff and Total hours of the month
+- [ ] Sum Total Diff and Total hours of the month or period
 - [ ] Choose one month on summary Time Records and Issue (make current month as default)
+- [ ] Add a issue summary ordered by issue (not days)
+- [ ] Show every day on summary (remove diff from weekend and holidays)
 
 - [ ] Add version per build (to see if the deploy was done successfully)
 - [ ] Add balance per month / week / full
 
-- [ ] Add command to view total hours by day (query already created) or put it inside the summary (round total day on removing the seconds)
 - [ ] Internalize database with SqLite to install db with the application
 - [ ] Setup Instalation for the console application on windows
 - [ ] Unit Tests
-- [ ] History per date range
-- [ ] History per context
-- [ ] Balance
-- [ ] History with balance
 - [ ] Id to GUID type
-- [ ] Error handling
+- [ ] Better error handling
