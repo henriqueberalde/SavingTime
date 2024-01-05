@@ -57,6 +57,7 @@ namespace SavingTime.Bussiness
                     IssueCommand,
                     InfoCommand,
                     SummaryCommand,
+                    IssueSummaryCommand,
                     HistoryCommand,
                     TestIntegrationCommand
                 >(stdin)
@@ -81,6 +82,9 @@ namespace SavingTime.Bussiness
                             break;
                         case SummaryCommand:
                             ShowSummary((SummaryCommand)o);
+                            break;
+                        case IssueSummaryCommand:
+                            ShowIssueSummary((IssueSummaryCommand)o);
                             break;
                         case HistoryCommand:
                             History();
@@ -231,8 +235,32 @@ namespace SavingTime.Bussiness
             Console.WriteLine("Summary:\n");
             var summary = Summary.FromTimeRecordList(list);
             Console.WriteLine(summary.ToString());
+        }
 
-            var issues = dbContext.IssueRecords
+        public void ShowIssueSummary(IssueSummaryCommand o)
+        {
+            var number = o.ParsedNumber();
+            var query = dbContext.IssueRecords.AsQueryable();
+
+            if (number.HasValue)
+            {
+                var alldays = dbContext.IssueRecords
+                    .GroupBy(tr => tr.Time.Date)
+                    .Select(r => r.Key)
+                    .ToList();
+                alldays.Sort();
+                alldays.TakeLast(number.Value);
+
+                var filterDate = DateTime.Now.AddDays((number.Value - 1) * -1).Date;
+                query = dbContext.IssueRecords.Where(tr => tr.Time >= filterDate);
+            }
+            else
+            {
+                var refDate = DateTimeHelper.FirstDayOfMonth(DateTime.Now).Date;
+                query = dbContext.IssueRecords.Where(tr => tr.Time >= refDate);
+            }
+
+            var issues = query
                 .OrderBy(t => t.Time)
                 .ThenByDescending(t => t.Id)
                 .ToList();

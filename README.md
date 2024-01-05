@@ -40,7 +40,7 @@ A tool to store time records at work
 - [x] Add diff on summary view (-8h + totalhours)
 - [ ] Choose one day in info command
 - [ ] Show issue info in info command
-- [ ] Show Issue Summary separated from Time Records Summary
+- [x] Show Issue Summary separated from Time Records Summary
 - [ ] Sum Total Diff and Total hours of the month or period
 - [x] Make current month as default on summary
 - [ ] Make current month as default on summary issue
