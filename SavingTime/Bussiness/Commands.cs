@@ -126,7 +126,7 @@ namespace SavingTime.Bussiness
     {
     }
 
-    [Verb("summary", HelpText = "Summary of the entire base.")]
+    [Verb("summary", HelpText = "Summary of the period (default: current month).")]
     public class SummaryCommand
     {
         [Option('n', "number", Required = false, HelpText = "The number of records to show. 'full' to full summary")]
