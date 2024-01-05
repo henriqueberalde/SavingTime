@@ -42,7 +42,9 @@ A tool to store time records at work
 - [ ] Show issue info in info command
 - [ ] Show Issue Summary separated from Time Records Summary
 - [ ] Sum Total Diff and Total hours of the month or period
-- [ ] Choose one month on summary Time Records and Issue (make current month as default)
+- [x] Make current month as default on summary
+- [ ] Make current month as default on summary issue
+- [ ] Choose one month on summary 
 - [ ] Add a issue summary ordered by issue (not days)
 - [ ] Show every day on summary (remove diff from weekend and holidays)
 
