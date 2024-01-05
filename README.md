@@ -38,12 +38,12 @@ A tool to store time records at work
 - [x] Add a feature to track issues time spent
 - [x] Add command to view total hours by day in summary view
 - [x] Add diff on summary view (-8h + totalhours)
-- [ ] Choose one day in info command
-- [ ] Show issue info in info command
+- [x] Choose one day in info command
+- [x] Show issue info in info command
 - [x] Show Issue Summary separated from Time Records Summary
-- [ ] Sum Total Diff and Total hours of the month or period
 - [x] Make current month as default on summary
-- [ ] Make current month as default on summary issue
+- [x] Make current month as default on summary issue
+- [ ] Sum Total Diff and Total hours of the month or period
 - [ ] Choose one month on summary 
 - [ ] Add a issue summary ordered by issue (not days)
 - [ ] Show every day on summary (remove diff from weekend and holidays)

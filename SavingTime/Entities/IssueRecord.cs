@@ -1,4 +1,6 @@
-﻿namespace SavingTime.Entities
+﻿using SavingTime.Migrations;
+
+namespace SavingTime.Entities
 {
     public class IssueRecord : BaseTimeRecord
     {
@@ -9,6 +11,13 @@
             string issue
          ) : base(time, type) {
             Issue = issue;
+        }
+        public override string ToString()
+        {
+            string typeInfo = Type == TimeRecordType.Exit ? $"{Type} " : Type.ToString();
+            var context = Issue ?? "";
+
+            return $"{typeInfo} - {Time} {context}";
         }
     }
 }

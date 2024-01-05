@@ -119,6 +119,27 @@ namespace SavingTime.Bussiness
     [Verb("info", HelpText = "Show informations about the day.")]
     public class InfoCommand
     {
+        [Option('d', "date", Required = false, HelpText = "The date of the record to show. Format: YYYY-MM-DD")]
+        public string? DateTime { get; set; }
+
+        public DateTime? DateTimeConverted
+        {
+            get
+            {
+                return convertDateTime();
+            }
+        }
+
+        private DateTime? convertDateTime()
+        {
+            return DateTime is not null
+                ? System.DateTime.ParseExact(
+                    DateTime,
+                    "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture
+                )
+                : null;
+        }
     }
 
     [Verb("history", HelpText = "All time records.")]

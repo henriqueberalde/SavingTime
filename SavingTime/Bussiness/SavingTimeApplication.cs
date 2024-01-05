@@ -3,6 +3,7 @@ using Integrations;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
+using System.Drawing;
 
 namespace SavingTime.Bussiness
 {
@@ -78,7 +79,7 @@ namespace SavingTime.Bussiness
                             RegisterTimeRecord((ExitCommand)o);
                             break;
                         case InfoCommand:
-                            ShowInfo();
+                            ShowInfo((InfoCommand)o);
                             break;
                         case SummaryCommand:
                             ShowSummary((SummaryCommand)o);
@@ -165,7 +166,7 @@ namespace SavingTime.Bussiness
             }
 
             Console.WriteLine($"{o.TypeRecord} Registered");
-            ShowInfo();
+            ShowInfo(new InfoCommand());
         }
 
         public void TestBrowserIntegration()
@@ -197,8 +198,11 @@ namespace SavingTime.Bussiness
             var list = dbContext.TimeRecords
                 .OrderBy((t) => t.Time)
                 .ThenByDescending(t => t.Id);
-            Console.WriteLine("All TimeRecords from data base:\n");
-            ShowTimeRecorList(list);
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nAll TimeRecords:\n");
+            Console.ResetColor();
+            ShowRecorList(list);
         }
 
         public void ShowSummary(SummaryCommand o)
@@ -232,7 +236,10 @@ namespace SavingTime.Bussiness
                 list.Add(new TimeRecord(DateTime.Now, TimeRecordType.Exit, null));
             }
 
-            Console.WriteLine("Summary:\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nSummary:");
+            Console.ResetColor();
+
             var summary = Summary.FromTimeRecordList(list);
             Console.WriteLine(summary.ToString());
         }
@@ -264,35 +271,59 @@ namespace SavingTime.Bussiness
                 .OrderBy(t => t.Time)
                 .ThenByDescending(t => t.Id)
                 .ToList();
-
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nIssue Summary:");
+            Console.ResetColor();
             new IssueService(dbContext).Summary(issues);
         }
 
-        public void ShowInfo() {
-            var now = DateTime.Now;
-            var list = dbContext.TimeRecords
+        public void ShowInfo(InfoCommand o) {
+            var refDate = o.DateTimeConverted ?? DateTime.Now;
+
+            var timeList = dbContext.TimeRecords
                 .Where(t =>
-                    t.Time.Year == now.Year &&
-                    t.Time.Month == now.Month &&
-                    t.Time.Day == now.Day
-                ).OrderBy(t => t.Time)
-                .ThenByDescending(t => t.Id);
-            ShowTimeRecorList(list);
+                    t.Time.Year == refDate.Year &&
+                    t.Time.Month == refDate.Month &&
+                    t.Time.Day == refDate.Day
+                )
+                .OrderBy(t => t.Time)
+                .ThenBy(t => t.Id);
+
+            var issueList = dbContext.IssueRecords
+                .Where(t =>
+                    t.Time.Year == refDate.Year &&
+                    t.Time.Month == refDate.Month &&
+                    t.Time.Day == refDate.Day
+                )
+                .OrderBy(t => t.Time)
+                .ThenBy(t => t.Id);
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nTime Records:");
+            Console.ResetColor();
+            ShowRecorList(timeList);
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\nIssues:");
+            Console.ResetColor();
+            ShowRecorList(issueList);
         }
 
-        public void ShowTimeRecorList(IEnumerable<TimeRecord> list)
+        public void ShowRecorList(IEnumerable<BaseTimeRecord> list)
         {
             foreach (var time in list)
             {
                 ConsoleColor color;
                 if (time.Type == TimeRecordType.Entry)
-                    color = ConsoleColor.Green;
+                    color = ConsoleColor.DarkGreen;
                 else
-                    color = ConsoleColor.Red;
+                    color = ConsoleColor.DarkRed;
 
                 Console.ForegroundColor = color;
-                Console.WriteLine(time.ToString());
+                Console.Write("\u2588 ");
                 Console.ResetColor();
+                Console.WriteLine(time.ToString());
             }
         }
 
