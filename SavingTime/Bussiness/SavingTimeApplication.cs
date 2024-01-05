@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using Integrations;
+using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
 
@@ -201,7 +202,8 @@ namespace SavingTime.Bussiness
             var number = o.ParsedNumber();
             var query = dbContext.TimeRecords.AsQueryable();
 
-            if (number.HasValue) {
+            if (number.HasValue)
+            {
                 var alldays = dbContext.TimeRecords
                     .GroupBy(tr => tr.Time.Date)
                     .Select(r => r.Key)
@@ -209,8 +211,12 @@ namespace SavingTime.Bussiness
                 alldays.Sort();
                 alldays.TakeLast(number.Value);
 
-                var filterDate = DateTime.Now.AddDays((number.Value - 1)*-1).Date;
+                var filterDate = DateTime.Now.AddDays((number.Value - 1) * -1).Date;
                 query = dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
+            }
+            else {
+                var refDate = DateTimeHelper.FirstDayOfMonth(DateTime.Now).Date;
+                query = dbContext.TimeRecords.Where(tr => tr.Time >= refDate);
             }
 
             var list = query

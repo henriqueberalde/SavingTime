@@ -130,18 +130,19 @@ namespace SavingTime.Bussiness
     public class SummaryCommand
     {
         [Option('n', "number", Required = false, HelpText = "The number of records to show. 'full' to full summary")]
-        public string? Number { get; set; } = "25";
+        public string? Number { get; set; }
 
         public int? ParsedNumber() {
             if (Number == "full") {
                 return null;
             }
 
-            if (int.TryParse(Number, out int n)) {
+            if (int.TryParse(Number, out int n))
+            {
                 return n;
             }
 
-            throw new Exception("Invalid parameter number");
+            return null;
         }
     }
 
