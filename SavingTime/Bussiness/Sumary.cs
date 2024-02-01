@@ -23,6 +23,14 @@ namespace SavingTime.Bussiness
                 if (max is null || max < item.MaxHour) { max = item.MaxHour; }
             }
 
+            if (min is null) {
+                min = minHour;
+            }
+
+            if (max is null) {
+                max = maxHour;
+            }
+
             if (min is null || max is null) { throw new Exception("Min or max null error"); }
             _minHour = min.Value;
             _maxHour = max.Value;

@@ -208,7 +208,7 @@ namespace SavingTime.Bussiness
         public void ShowSummary(SummaryCommand o)
         {
             var number = o.ParsedNumber();
-            var query = dbContext.TimeRecords.AsQueryable();
+            IQueryable<TimeRecord> query;
 
             if (number.HasValue)
             {
