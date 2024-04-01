@@ -44,6 +44,7 @@ A tool to store time records at work
 - [x] Make current month as default on summary
 - [x] Make current month as default on summary issue
 - [ ] Insert past issue records
+- [ ] Add Issue field on entry
 - [ ] Sum Total Diff and Total hours of the month or period
 - [ ] Choose one month on summary
 - [ ] Add a issue summary ordered by issue (not days)
