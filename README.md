@@ -43,10 +43,12 @@ A tool to store time records at work
 - [x] Show Issue Summary separated from Time Records Summary
 - [x] Make current month as default on summary
 - [x] Make current month as default on summary issue
+- [ ] Insert past issue records
 - [ ] Sum Total Diff and Total hours of the month or period
-- [ ] Choose one month on summary 
+- [ ] Choose one month on summary
 - [ ] Add a issue summary ordered by issue (not days)
 - [ ] Show every day on summary (remove diff from weekend and holidays)
+- [ ] Change issue of records
 
 - [ ] Add version per build (to see if the deploy was done successfully)
 - [ ] Add balance per month / week / full
