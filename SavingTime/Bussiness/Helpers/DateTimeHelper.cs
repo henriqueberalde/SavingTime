@@ -18,5 +18,20 @@
         {
             return DateTime.Now.AddMonths(-1);
         }
+
+        public static string FormatTimeSpan(TimeSpan t)
+        {
+            var hours = (int)t.TotalHours;
+            var minutes = t.Minutes;
+
+            var hoursStr = Math.Abs(hours).ToString("00");
+            var minutesStr = Math.Abs(minutes).ToString("00");
+            var finalStr = $"{hoursStr}:{minutesStr}";
+
+            if (hours < 0)
+                return $"-{finalStr}";
+            else
+                return $" {finalStr}";
+        }
     }
 }

@@ -37,8 +37,9 @@ namespace SavingTime.Bussiness
             }
             catch (Exception ex)
             {
-                Console.Write("Error on Summary");
-                Console.Write(ex.Message);
+                Console.WriteLine("Error on Summary");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
 
             while (true)
@@ -209,6 +210,7 @@ namespace SavingTime.Bussiness
         {
             var number = o.ParsedNumber();
             IQueryable<TimeRecord> query;
+            var dateRef = DateTime.Now;
 
             if (number.HasValue)
             {
@@ -219,11 +221,11 @@ namespace SavingTime.Bussiness
                 alldays.Sort();
                 alldays.TakeLast(number.Value);
 
-                var filterDate = DateTime.Now.AddDays((number.Value - 1) * -1).Date;
+                var filterDate = dateRef.AddDays((number.Value - 1) * -1).Date;
                 query = dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
             }
             else {
-                var refDate = DateTimeHelper.FirstDayOfMonth(DateTime.Now).Date;
+                var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
                 query = dbContext.TimeRecords.Where(tr => tr.Time >= refDate);
             }
 
@@ -233,7 +235,7 @@ namespace SavingTime.Bussiness
                 .ToList();
 
             if (LastType() == TimeRecordType.Entry) {
-                list.Add(new TimeRecord(DateTime.Now, TimeRecordType.Exit, null));
+                list.Add(new TimeRecord(dateRef, TimeRecordType.Exit, null));
             }
 
             Console.ForegroundColor = ConsoleColor.White;

@@ -1,4 +1,5 @@
-﻿using SavingTime.Entities;
+﻿using SavingTime.Bussiness.Helpers;
+using SavingTime.Entities;
 using System.Text;
 
 namespace SavingTime.Bussiness
@@ -9,6 +10,42 @@ namespace SavingTime.Bussiness
         private readonly int _maxHour;
 
         public List<SummaryItem> Items { get; set; }
+
+        public TimeSpan Total
+        {
+            get
+            {
+                var total = new TimeSpan();
+                Items.ForEach(i => total += i.Total);
+                return total;
+            }
+        }
+
+        public TimeSpan ParcialDiff
+        {
+            get
+            {
+                var totalDiff = new TimeSpan();
+
+                Items.ForEach(i => {
+                    if (i.Date.Date != DateTime.Now.Date) {
+                        totalDiff += i.Diff;
+                    }
+                });
+
+                return totalDiff;
+            }
+        }
+
+        public TimeSpan TotalDiff
+        {
+            get
+            {
+                var totalDiff = new TimeSpan();
+                Items.ForEach(i => totalDiff += i.Diff);
+                return totalDiff;
+            }
+        }
 
         public Summary(List<SummaryItem> items, int minHour, int maxHour)
         {
@@ -63,6 +100,19 @@ namespace SavingTime.Bussiness
                 result.Append(item.ToString(_minHour, _maxHour));
                 result.Append("\n");
             }
+
+            result.Append("\n");
+            var parcialDiffStr = DateTimeHelper.FormatTimeSpan(ParcialDiff);
+            result.Append($"Diff (parcial) |{parcialDiffStr}");
+            result.Append("\n");
+
+            var totalDiffStr = DateTimeHelper.FormatTimeSpan(TotalDiff);
+            result.Append($"Diff           |{totalDiffStr}");
+            result.Append("\n");
+
+            var totalStr = DateTimeHelper.FormatTimeSpan(Total);
+            result.Append($"Total          |{totalStr}");
+            result.Append("\n");
 
             return result.ToString();
         }

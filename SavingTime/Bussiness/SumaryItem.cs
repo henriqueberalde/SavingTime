@@ -1,4 +1,5 @@
-﻿using SavingTime.Entities;
+﻿using SavingTime.Bussiness.Helpers;
+using SavingTime.Entities;
 using System.Text;
 
 namespace SavingTime.Bussiness
@@ -17,6 +18,14 @@ namespace SavingTime.Bussiness
                 foreach (var slice in WorkedSlices) { total += slice.Total; }
 
                 return total;
+            }
+        }
+
+        public TimeSpan Diff
+        {
+            get
+            {
+                return TimeSpan.FromHours(-8) + Total;
             }
         }
 
@@ -91,9 +100,7 @@ namespace SavingTime.Bussiness
                     result.Append(" ");
                 }
             }
-            var diff = TimeSpan.FromHours(-8) + Total;
-            var diffStr = diff.TotalHours < 0 ? $"{diff}" : $" {diff}";
-
+            var diffStr = DateTimeHelper.FormatTimeSpan(Diff);
             result.Append($"| {Total.Hours.ToString("D2")}:{Total.Minutes.ToString("D2")} ({string.Format("{0:00.00}", (decimal)Total.TotalHours)}) | {diffStr}");
 
             return result.ToString();
