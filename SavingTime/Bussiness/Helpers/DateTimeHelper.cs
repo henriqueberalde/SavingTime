@@ -28,7 +28,7 @@
             var minutesStr = Math.Abs(minutes).ToString("00");
             var finalStr = $"{hoursStr}:{minutesStr}";
 
-            if (hours < 0)
+            if (t.TotalHours < 0)
                 return $"-{finalStr}";
             else
                 return $" {finalStr}";
