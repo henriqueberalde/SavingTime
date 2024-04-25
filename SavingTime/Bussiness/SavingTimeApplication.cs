@@ -148,7 +148,7 @@ namespace SavingTime.Bussiness
                 var dateTimePlus10Min = dateTime.AddSeconds(60 * 10);
                 var config = new LacunaConfiguration(
                     "carlosb",
-                    "Henrique0428!",
+                    "<password>",
                     "Carlos Beralde",
                     dateTime,
                     o.TypeRecord.ToString()
@@ -176,7 +176,7 @@ namespace SavingTime.Bussiness
 
             var config = new LacunaConfiguration(
                 "carlosb",
-                "Henrique0428!",
+                "<password>",
                 "Carlos Beralde",
                 DateTime.Now,
                 ""
