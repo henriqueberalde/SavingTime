@@ -3,6 +3,7 @@ using Integrations;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace SavingTime.Bussiness
@@ -208,33 +209,17 @@ namespace SavingTime.Bussiness
 
         public void ShowSummary(SummaryCommand o)
         {
-            var number = o.ParsedNumber();
             IQueryable<TimeRecord> query;
-            var dateRef = DateTime.Now;
-
-            if (number.HasValue)
-            {
-                var alldays = dbContext.TimeRecords
-                    .GroupBy(tr => tr.Time.Date)
-                    .Select(r => r.Key)
-                    .ToList();
-                alldays.Sort();
-                alldays.TakeLast(number.Value);
-
-                var filterDate = dateRef.AddDays((number.Value - 1) * -1).Date;
-                query = dbContext.TimeRecords.Where(tr => tr.Time >= filterDate);
-            }
-            else {
-                var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
-                query = dbContext.TimeRecords.Where(tr => tr.Time >= refDate);
-            }
+            var dateRef = o.Month.HasValue ? new DateTime(DateTime.Now.Year, o.Month.Value, 1) : DateTime.Now;
+            var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
+            query = dbContext.TimeRecords.Where(tr => tr.Time >= refDate && tr.Time <= DateTimeHelper.LastTimeOfDay(DateTimeHelper.LastDayOfMonth(refDate)));
 
             var list = query
                 .OrderBy(t => t.Time)
                 .ThenByDescending(t => t.Id)
                 .ToList();
 
-            if (LastType() == TimeRecordType.Entry) {
+            if (LastType(list) == TimeRecordType.Entry) {
                 list.Add(new TimeRecord(dateRef, TimeRecordType.Exit, null));
             }
 
@@ -248,26 +233,10 @@ namespace SavingTime.Bussiness
 
         public void ShowIssueSummary(IssueSummaryCommand o)
         {
-            var number = o.ParsedNumber();
             var query = dbContext.IssueRecords.AsQueryable();
-
-            if (number.HasValue)
-            {
-                var alldays = dbContext.IssueRecords
-                    .GroupBy(tr => tr.Time.Date)
-                    .Select(r => r.Key)
-                    .ToList();
-                alldays.Sort();
-                alldays.TakeLast(number.Value);
-
-                var filterDate = DateTime.Now.AddDays((number.Value - 1) * -1).Date;
-                query = dbContext.IssueRecords.Where(tr => tr.Time >= filterDate);
-            }
-            else
-            {
-                var refDate = DateTimeHelper.FirstDayOfMonth(DateTime.Now).Date;
-                query = dbContext.IssueRecords.Where(tr => tr.Time >= refDate);
-            }
+            var dateRef = o.Month.HasValue ? new DateTime(DateTime.Now.Year, o.Month.Value, 1) : DateTime.Now;
+            var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
+            query = dbContext.IssueRecords.Where(tr => tr.Time >= refDate && tr.Time <= DateTimeHelper.LastTimeOfDay(DateTimeHelper.LastDayOfMonth(refDate)));
 
             var issues = query
                 .OrderBy(t => t.Time)
@@ -329,8 +298,15 @@ namespace SavingTime.Bussiness
             }
         }
 
-        private TimeRecordType? LastType() {
-            return dbContext.TimeRecords
+        private TimeRecordType? LastType()
+        {
+            return LastType(dbContext.TimeRecords.ToList());
+        }
+
+        private TimeRecordType? LastType(List<TimeRecord> list) {
+            var localList = list ?? dbContext.TimeRecords.ToList();
+
+            return localList
                 .OrderByDescending(r => r.Time)
                 .ThenByDescending(t => t.Id)
                 .FirstOrDefault()?.Type;

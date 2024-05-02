@@ -150,43 +150,15 @@ namespace SavingTime.Bussiness
     [Verb("summary", HelpText = "Summary of the time records on the period (default: current month).")]
     public class SummaryCommand
     {
-        [Option('n', "number", Required = false, HelpText = "The number of records to show. 'full' to full summary")]
-        public string? Number { get; set; }
-
-        public int? ParsedNumber() {
-            if (Number == "full") {
-                return null;
-            }
-
-            if (int.TryParse(Number, out int n))
-            {
-                return n;
-            }
-
-            return null;
-        }
+        [Option('m', "month", Required = false, HelpText = "Month of records to show")]
+        public int? Month { get; set; }
     }
 
     [Verb("issue-summary", HelpText = "Summary of the issue record on the period (default: current month).")]
     public class IssueSummaryCommand
     {
-        [Option('n', "number", Required = false, HelpText = "The number of records to show. 'full' to full summary")]
-        public string? Number { get; set; }
-
-        public int? ParsedNumber()
-        {
-            if (Number == "full")
-            {
-                return null;
-            }
-
-            if (int.TryParse(Number, out int n))
-            {
-                return n;
-            }
-
-            return null;
-        }
+        [Option('m', "month", Required = false, HelpText = "Month of records to show")]
+        public int? Month { get; set; }
     }
 
     [Verb("test", HelpText = "Test browser integration.")]

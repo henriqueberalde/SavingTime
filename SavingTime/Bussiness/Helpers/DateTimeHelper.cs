@@ -19,6 +19,11 @@
             return DateTime.Now.AddMonths(-1);
         }
 
+        public static DateTime LastTimeOfDay(DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day, 23, 59, 59);
+        }
+
         public static string FormatTimeSpan(TimeSpan t)
         {
             var hours = (int)t.TotalHours;
