@@ -184,7 +184,7 @@ namespace SavingTime.Bussiness
             }
 
             command.Context = Context;
-            command.RegisterTimeRecord();
+            command.Run(DbContext!);
         }
 
         protected override void Init()
