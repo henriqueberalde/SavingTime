@@ -3,12 +3,12 @@ using SavingTime.Entities;
 
 namespace SavingTime.Bussiness
 {
-    public class TimeService
+    public class TimeRecordService
     {
         private readonly SavingTimeDbContext dbContext;
         private readonly IssueService issueService;
 
-        public TimeService(SavingTimeDbContext dbContext, IssueService issueService)
+        public TimeRecordService(SavingTimeDbContext dbContext, IssueService issueService)
         {
             this.dbContext = dbContext;
             this.issueService = issueService;
@@ -58,6 +58,21 @@ namespace SavingTime.Bussiness
                 .OrderByDescending(t => t.Time)
                 .ThenByDescending(t => t.Id)
                 .First().Type == Entities.TimeRecordType.Entry;
+        }
+
+        public TimeRecordType? LastType()
+        {
+            return LastType(dbContext.TimeRecords.ToList());
+        }
+
+        public TimeRecordType? LastType(List<TimeRecord> list)
+        {
+            var localList = list ?? dbContext.TimeRecords.ToList();
+
+            return localList
+                .OrderByDescending(r => r.Time)
+                .ThenByDescending(t => t.Id)
+                .FirstOrDefault()?.Type;
         }
     }
 }

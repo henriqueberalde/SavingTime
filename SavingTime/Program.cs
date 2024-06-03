@@ -18,7 +18,7 @@ namespace SavingTime
                 services.AddSingleton<SavingTimeDbContext, SavingTimeDbContext>();
                 services.AddSingleton<DbContext, SavingTimeDbContext>();
 
-                services.AddScoped<TimeService>();
+                services.AddScoped<TimeRecordService>();
                 services.AddScoped<IssueService>();
 
             }).Build();

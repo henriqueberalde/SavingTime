@@ -53,6 +53,12 @@ namespace SavingTime.Bussiness
 
         public void Summary(List<IssueRecord> list)
         {
+            if (!list.Any())
+            {
+                Console.WriteLine("\nNo records");
+                return;
+            }
+
             var descriptionMaxlength = list.Select(i => i.Issue.Length).Max();
             foreach (var groupItem in list.GroupBy(r => new { r.Time.Date, r.Issue }))
             {
@@ -76,16 +82,13 @@ namespace SavingTime.Bussiness
                     }
                 }
 
-                var a = new TimeSpan();
-                var b = new TimeSpan();
-                var c = a + b;
                 TimeSpan totalInTimeSpan = new TimeSpan();
                 slices.ForEach(s => totalInTimeSpan += s);
                 decimal totalHoursInDecimal = (decimal)slices.Sum(s => s.TotalHours);
                 var issueLenght = groupItem.Key.Issue.Length;
                 var issueStr = $"{groupItem.Key.Issue}".PadRight(descriptionMaxlength, ' ');
 
-                Console.WriteLine($"{groupItem.Key.Date.ToString("dd/MM")} | {issueStr} - {totalInTimeSpan.Hours:D2}:{totalInTimeSpan.Minutes:D2} ({totalHoursInDecimal:00.00})");
+                Console.WriteLine($"{groupItem.Key.Date.ToString("dd/MM")} | {issueStr} - {totalInTimeSpan.Hours:D2}:{totalInTimeSpan.Minutes:D2} (In hour: {totalHoursInDecimal:00.00}) (In sec: {totalInTimeSpan.TotalSeconds:000000})");
             }
         }
     }
