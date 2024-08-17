@@ -5,27 +5,27 @@ namespace Integrations.Jira
 {
     public class JiraIntegration
     {
-        private readonly string Token;
+        private readonly JiraIntegrationOptions Options;
 
-        public JiraIntegration(string token)
+        public JiraIntegration(JiraIntegrationOptions jiraIntegrationOptions)
         {
-            Token = token;
+            Options = jiraIntegrationOptions;
         }
 
         public async Task PostWorklog(JiraWorklog worklog)
         {
             var client = new HttpClient
             {
-                BaseAddress = new Uri("https://lacuna.atlassian.net/") // TODO - PUT ON ENV
+                BaseAddress = new Uri(Options.Url)
             };
 
-            var path = $"rest/api/3/issue/{worklog.Issue}/worklog";
+            var path = Options.Endpoint.Replace("{{issue}}", worklog.Issue);
             var httpContent = JsonContent.Create(requestContent(worklog));
             var request = new HttpRequestMessage(HttpMethod.Post, path)
             {
                 Content = httpContent
             };
-            request.Headers.Add("Authorization", $"Basic {Token}");
+            request.Headers.Add("Authorization", $"Basic {Options.Token}");
 
             var response = await client.SendAsync(request);
 
