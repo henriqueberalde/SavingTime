@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
@@ -11,9 +12,9 @@ namespace SavingTime.Bussiness
         [Option('m', "month", Required = false, HelpText = "Month of records to show")]
         public int? Month { get; set; }
 
-        public override void Run(SavingTimeDbContext dbContext)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
-            base.Run(dbContext);
+            base.Run(host, dbContext);
             var query = dbContext.IssueRecords.AsQueryable();
             var dateRef = Month.HasValue ? new DateTime(DateTime.Now.Year, Month.Value, 1) : DateTime.Now;
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;

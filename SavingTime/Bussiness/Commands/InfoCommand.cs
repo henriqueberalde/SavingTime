@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
@@ -32,7 +33,7 @@ namespace SavingTime.Bussiness
                 : null;
         }
 
-        public override void Run(SavingTimeDbContext dbContext)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
             var refDate = DateTimeConverted ?? DateTime.Now;
 

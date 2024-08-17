@@ -1,5 +1,7 @@
 ﻿using CommandLine;
-using Integrations;
+using Integrations.Jira;
+using Integrations.Jira.Classes;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
@@ -17,8 +19,8 @@ namespace SavingTime.Bussiness
 
         private IssueService? issueRecordService { get; set; }
 
-        public override void Run(SavingTimeDbContext dbContext) {
-            base.Run(dbContext);
+        public override void Run(IHost host, SavingTimeDbContext dbContext) {
+            base.Run(host, dbContext);
             
             var dateRef = Month.HasValue ? new DateTime(DateTime.Now.Year, Month.Value, 1) : DateTime.Now;
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;

@@ -1,5 +1,8 @@
 ﻿using CommandLine;
-using Integrations;
+using Integrations.Ponto;
+using Integrations.Ponto.Classes;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 using SavingTime.Entities;
@@ -84,10 +87,12 @@ namespace SavingTime.Bussiness
             );
         }
 
-        public override void Run(SavingTimeDbContext _)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
-            base.Run(_);
-            RegisterTimeRecord();
+            base.Run(host, dbContext);
+
+            var pontoConfig = host.Services.GetService<PontoConfiguration>();
+            RegisterTimeRecord(pontoConfig);
         }
 
         protected override void Init()
@@ -96,7 +101,7 @@ namespace SavingTime.Bussiness
             timeRecordService = new TimeRecordService(DbContext!, issueRecordService);
         }
 
-        public void RegisterTimeRecord()
+        public void RegisterTimeRecord(PontoConfiguration pontoConfig)
         {
             var now = DateTime.Now;
             var dateTime = DateTimeConverted ?? new DateTime(
@@ -117,14 +122,16 @@ namespace SavingTime.Bussiness
             if (!CancelIntegration)
             {
                 var dateTimePlus10Min = dateTime.AddSeconds(60 * 10);
-                var config = new LacunaConfiguration(
-                    "carlosb",
-                    "<password>",
-                    "Carlos Beralde",
+
+                var options = new PontoIntegrationOptions(
+                    pontoConfig.UserName,
+                    pontoConfig.Password,
+                    pontoConfig.ExpectedProfileName,
                     dateTime,
                     TypeRecord.ToString()
                 );
-                var interation = new LacunaIntegration(config);
+
+                var interation = new PontoIntegration(options);
 
                 var todayInitial = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0);
                 var todayEnd = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 23, 59, 59);
@@ -143,14 +150,14 @@ namespace SavingTime.Bussiness
 
         private void RunInfoCommand()
         {
-            new InfoCommand().Run(DbContext!);
+            new InfoCommand().Run(Host, DbContext!);
         }
     }
 
     [Verb("entry", HelpText = "Register an entry record.")]
     public class EntryCommand : LogTimeCommand
     {
-        public EntryCommand() : base(TimeRecordType.Entry)
+        public EntryCommand(PontoConfiguration pontoConfig) : base(TimeRecordType.Entry)
         {
         }
     }
@@ -158,7 +165,7 @@ namespace SavingTime.Bussiness
     [Verb("exit", HelpText = "Register an exit record.")]
     public class ExitCommand : LogTimeCommand
     {
-        public ExitCommand() : base(TimeRecordType.Exit)
+        public ExitCommand(PontoConfiguration pontoConfig) : base(TimeRecordType.Exit)
         {
         }
     }
@@ -171,20 +178,25 @@ namespace SavingTime.Bussiness
 
         private TimeRecordService? timeRecordService { get; set; }
         private IssueService? issueRecordService { get; set; }
+        private PontoConfiguration PontoConfig { get; set; }
 
-        public override void Run(SavingTimeDbContext _)
+        public DoCommand(PontoConfiguration pontoConfig) {
+            PontoConfig = pontoConfig;
+        }
+
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
-            base.Run(_);
+            base.Run(host, dbContext);
             var lastType = timeRecordService!.LastType() ?? TimeRecordType.Exit;
-            LogTimeCommand command = new EntryCommand();
+            LogTimeCommand command = new EntryCommand(PontoConfig);
 
             if (lastType == TimeRecordType.Entry)
             {
-                command = new ExitCommand();
+                command = new ExitCommand(PontoConfig);
             }
 
             command.Context = Context;
-            command.Run(DbContext!);
+            command.Run(host, DbContext!);
         }
 
         protected override void Init()

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 
@@ -6,23 +7,23 @@ namespace SavingTime.Bussiness
 {
     public interface ISavingTimeApplication
     {
-        void Run();
+        void Run(IHost host);
     }
 
     public class SavingTimeApplication : ISavingTimeApplication
     {
         private readonly SavingTimeDbContext dbContext;
 
-        public SavingTimeApplication(
-            SavingTimeDbContext dbContext)
+        public SavingTimeApplication(SavingTimeDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
-        public void Run()
+
+        public void Run(IHost host)
         {
             Console.WriteLine("SAVING TIME\n");
 
-            RunSummaryCommand();
+            RunSummaryCommand(host);
 
             while (true)
             {
@@ -46,15 +47,15 @@ namespace SavingTime.Bussiness
                     TestCommand,
                     JiraCommand
                 >(stdin)
-                .WithParsed<BaseCommand>(o => o.Run(dbContext));
+                .WithParsed<BaseCommand>(o => o.Run(host, dbContext));
                 
                 dbContext.ChangeTracker.Clear();
             }
         }
 
-        private void RunSummaryCommand()
+        private void RunSummaryCommand(IHost host)
         {
-            new SummaryCommand().Run(dbContext);
+            new SummaryCommand().Run(host,dbContext);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 using SavingTime.Entities;
@@ -19,9 +20,9 @@ namespace SavingTime.Bussiness
             TypeRecord = TimeRecordType.Entry;
         }
 
-        public override void Run(SavingTimeDbContext dbContext)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
-            base.Run(dbContext);
+            base.Run(host, dbContext);
             var now = DateTime.Now;
             var dateTime = new DateTime(
                 now.Year,

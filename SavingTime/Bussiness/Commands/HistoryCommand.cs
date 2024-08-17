@@ -1,15 +1,15 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
-using SavingTime.Entities;
 
 namespace SavingTime.Bussiness
 {
     [Verb("history", HelpText = "All time records.")]
     public class HistoryCommand : BaseCommand
     {
-        public override void Run(SavingTimeDbContext dbContext)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
             var list = dbContext.TimeRecords
                 .OrderBy((t) => t.Time)

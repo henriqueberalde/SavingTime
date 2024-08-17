@@ -1,5 +1,8 @@
 ﻿using CommandLine;
 using Integrations;
+using Integrations.Ponto;
+using Integrations.Ponto.Classes;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 
@@ -11,8 +14,8 @@ namespace SavingTime.Bussiness
         [Option('t', "type", Required = true, HelpText = "Type of test to be made (browser, jira)")]
         public string Type { get; set; }
 
-        public override void Run(SavingTimeDbContext dbContext) {
-            base.Run(dbContext);
+        public override void Run(IHost host, SavingTimeDbContext dbContext) {
+            base.Run(host, dbContext);
             switch (Type)
             {
                 case "browser":
@@ -28,14 +31,14 @@ namespace SavingTime.Bussiness
         {
             Console.WriteLine("Testing Browser integration\n");
 
-            var config = new LacunaConfiguration(
+            var options = new PontoIntegrationOptions(
                 "carlosb",
-                "<password>",
+                "Henrique0428!",
                 "Carlos Beralde",
                 DateTime.Now,
                 ""
             );
-            var interation = new LacunaIntegration(config);
+            var interation = new PontoIntegration(options);
             try
             {
                 interation.Test();

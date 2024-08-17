@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
@@ -17,9 +18,9 @@ namespace SavingTime.Bussiness
 
         private IssueService? issueRecordService { get; set; }
 
-        public override void Run(SavingTimeDbContext _)
+        public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
-            base.Run(_);
+            base.Run(host, dbContext);
             try
             {
                 showSummary();
