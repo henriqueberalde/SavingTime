@@ -3,23 +3,29 @@ using Integrations.Jira.Classes;
 
 namespace Integrations.Jira
 {
-    public static class JiraIntegration
+    public class JiraIntegration
     {
-        public static async Task PostWorklog(JiraWorklog worklog)
+        private readonly string Token;
+
+        public JiraIntegration(string token)
+        {
+            Token = token;
+        }
+
+        public async Task PostWorklog(JiraWorklog worklog)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://lacuna.atlassian.net/") // TODO - PUT ON ENV
             };
-            var token = "Y2FybG9zYkBsYWN1bmFzb2Z0d2FyZS5jb206QVRBVFQzeEZmR0YwSEEtZ3FEODBJMlZnTzJzZi1Vclp5M090LWtrcE1EbFRBQVg5YWlvbUtDa2tZREFCdHI0RHJ4dzM0YkNQYjBWOGdCNWV1ZXR0U2EzWng4V1lKYTc4LUEyZHpUS1RjYjZyNldicnBURkVha19UQVJ5QW4xUUxuNjJjNXlESGdZMWR1NzhGMldPTUg5a01Zd1QxWlB6NlYza3N1aXl3MFhqeFd1VDdHbWM1b1FFPUQ3QTcxRTU1";
+
             var path = $"rest/api/3/issue/{worklog.Issue}/worklog";
             var httpContent = JsonContent.Create(requestContent(worklog));
-            var contentAsString = await httpContent.ReadAsStringAsync();
             var request = new HttpRequestMessage(HttpMethod.Post, path)
             {
                 Content = httpContent
             };
-            request.Headers.Add("Authorization", $"Basic {token}");
+            request.Headers.Add("Authorization", $"Basic {Token}");
 
             var response = await client.SendAsync(request);
 

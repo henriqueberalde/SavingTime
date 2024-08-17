@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using Integrations.Jira;
 using Integrations.Jira.Classes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
@@ -86,7 +87,8 @@ namespace SavingTime.Bussiness
 
             try
             {
-                JiraIntegration.PostWorklog(worklog).Wait();
+                var jiraIntegration = Host.Services.GetService<JiraIntegration>();
+                jiraIntegration?.PostWorklog(worklog).Wait();
                 Console.WriteLine($"Sent {str}");
             }
             catch (Exception e)
