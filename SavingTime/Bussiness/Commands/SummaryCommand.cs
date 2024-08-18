@@ -16,20 +16,8 @@ namespace SavingTime.Bussiness.Commands
         public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
             base.Run(host, dbContext);
-            try
-            {
-                var timeRecordService = host.Services.GetService<TimeRecordService>();
-                showSummary(timeRecordService);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error on Summary");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-        }
+            var timeRecordService = host.Services.GetService<TimeRecordService>();
 
-        private void showSummary(TimeRecordService timeRecordService) {
             IQueryable<TimeRecord> query;
             var dateRef = Month.HasValue ? new DateTime(DateTime.Now.Year, Month.Value, 1) : DateTime.Now;
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
