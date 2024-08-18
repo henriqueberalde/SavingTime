@@ -17,7 +17,7 @@ namespace SavingTime.Entities
             string typeInfo = Type == TimeRecordType.Exit ? $"{Type} " : Type.ToString();
             var context = Issue ?? "";
 
-            return $"{typeInfo} - {Time} {context}";
+            return $"{typeInfo} - {Id} {Time} {context}";
         }
     }
 }

@@ -16,12 +16,16 @@ namespace SavingTime.Bussiness
 
             Console.WriteLine("\n");
 
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("PontoConfig");
+            Console.ResetColor();
             showProperties(pontoConfig);
 
             Console.WriteLine("\n");
 
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("JiraConfig");
+            Console.ResetColor();
             showProperties(jiraConfig);
         }
 

@@ -23,7 +23,7 @@
                 context = $"[{Context}] ";
             }
 
-            return $"{context}{typeInfo} - {Time}";
+            return $"{context}{typeInfo} - {Id} {Time}";
         }
     }
 }

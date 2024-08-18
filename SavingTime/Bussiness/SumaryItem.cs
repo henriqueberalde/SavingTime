@@ -25,7 +25,13 @@ namespace SavingTime.Bussiness
         {
             get
             {
-                return TimeSpan.FromHours(-8) + Total;
+                if (Date.DayOfWeek == DayOfWeek.Saturday || Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    return Total;
+                }
+                else {
+                    return TimeSpan.FromHours(-8) + Total;
+                }
             }
         }
 

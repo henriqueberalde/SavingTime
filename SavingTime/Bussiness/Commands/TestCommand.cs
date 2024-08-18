@@ -2,6 +2,7 @@
 using Integrations;
 using Integrations.Ponto;
 using Integrations.Ponto.Classes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
@@ -19,7 +20,14 @@ namespace SavingTime.Bussiness
             switch (Type)
             {
                 case "browser":
-                    testBrowserIntegration();
+                    var pontoConfig = host.Services.GetService<PontoConfiguration>();
+                    testBrowserIntegration(new PontoIntegrationOptions(
+                            pontoConfig.UserName,
+                            pontoConfig.Password,
+                            pontoConfig.ExpectedProfileName,
+                            DateTime.Now,
+                            ""
+                        ));
                     break;
                 case "jira":
                     Console.WriteLine("Not implemented");
@@ -27,18 +35,10 @@ namespace SavingTime.Bussiness
             }
         }
 
-        private void testBrowserIntegration()
+        private void testBrowserIntegration(PontoIntegrationOptions pontoOptions)
         {
             Console.WriteLine("Testing Browser integration\n");
-
-            var options = new PontoIntegrationOptions(
-                "carlosb",
-                "Henrique0428!",
-                "Carlos Beralde",
-                DateTime.Now,
-                ""
-            );
-            var interation = new PontoIntegration(options);
+            var interation = new PontoIntegration(pontoOptions);
             try
             {
                 interation.Test();
