@@ -34,14 +34,7 @@ namespace SavingTime.Bussiness.Commands
 
         public void RegisterTimeRecord(TimeRecordService timeRecordService, PontoConfiguration pontoConfig)
         {
-            var now = DateTime.Now;
-            var dateTime = DateTimeConverted ?? new DateTime(
-                now.Year,
-                now.Month,
-                now.Day,
-                now.Hour,
-                now.Minute,
-                0);
+            var dateTime = DateTimeConvertedOrNow();
             var timeRecord = new TimeRecord(
                 dateTime,
                 TypeRecord,

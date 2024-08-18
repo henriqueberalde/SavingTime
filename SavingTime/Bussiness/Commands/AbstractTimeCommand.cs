@@ -20,6 +20,19 @@ namespace SavingTime.Bussiness.Commands
             }
         }
 
+        public DateTime DateTimeConvertedOrNow() {
+            var now = DateTime.Now;
+            var dateTime = DateTimeConverted ?? new DateTime(
+                now.Year,
+                now.Month,
+                now.Day,
+                now.Hour,
+                now.Minute,
+                0);
+
+            return dateTime;
+        }
+
         private DateTime? convertDateTime()
         {
             return RefDateTime is not null

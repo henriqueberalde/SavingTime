@@ -14,7 +14,7 @@ namespace SavingTime.Bussiness
 
         public void Entry(DateTime dateTime, string issue)
         {
-            var lastIssue = LastIssue();
+            var lastIssue = LastIssue(dateTime);
 
             if (lastIssue is not null && lastIssue.Type == TimeRecordType.Entry)
             {
@@ -30,7 +30,16 @@ namespace SavingTime.Bussiness
 
             dbContext.Add(issue);
             dbContext.SaveChanges();
-            Console.WriteLine($"Issue {issue.Issue} {issue.Type} Registered");
+
+            var withDateMessage = "";
+
+            if (issue.Time.Day != DateTime.Now.Day) {
+                withDateMessage = $" on {issue.Time:dd/MM/yyyy HH:mm}";
+            } else if ((DateTime.Now - issue.Time).TotalSeconds > 60) {
+                withDateMessage = $" at {issue.Time:HH:mm}";
+            }
+
+            Console.WriteLine($"Issue {issue.Issue} {issue.Type} Registered{withDateMessage}");
         }
 
         public void validateRecordsIntegrityForType(TimeRecordType type)
@@ -43,9 +52,11 @@ namespace SavingTime.Bussiness
             }
         }
 
-        public IssueRecord? LastIssue()
+        public IssueRecord? LastIssue(DateTime? refDateTime = null)
         {
+            var dateTime = refDateTime ?? DateTime.Now;
             return dbContext.IssueRecords
+                .Where(i => i.Time <= dateTime)
                 .OrderByDescending(i => i.Time)
                 .ThenByDescending(i => i.Id)
                 .FirstOrDefault();

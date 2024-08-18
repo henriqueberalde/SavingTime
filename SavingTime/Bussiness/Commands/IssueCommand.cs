@@ -7,7 +7,7 @@ using SavingTime.Entities;
 namespace SavingTime.Bussiness.Commands
 {
     [Verb("issue", HelpText = "Register an issue entry.")]
-    public class IssueCommand : BaseCommand
+    public class IssueCommand : AbstractTimeCommand
     {
         public TimeRecordType TypeRecord { get; set; }
 
@@ -23,15 +23,7 @@ namespace SavingTime.Bussiness.Commands
         {
             var issueRecordService = host.Services.GetService<IssueService>();
             base.Run(host, dbContext);
-            var now = DateTime.Now;
-            var dateTime = new DateTime(
-                now.Year,
-                now.Month,
-                now.Day,
-                now.Hour,
-                now.Minute,
-                0);
-            issueRecordService!.Entry(dateTime, Issue);
+            issueRecordService!.Entry(DateTimeConvertedOrNow(), Issue);
         }
     }
 }
