@@ -25,31 +25,42 @@ namespace SavingTime.Bussiness
 
             RunSummaryCommand(host);
 
-            while (true)
-            {
-                Console.Write(">");
-                var line = Console.In.ReadLine();
+            while (true) {
+                try {
+                    Console.Write(">");
+                    var line = Console.In.ReadLine();
 
-                if (line is null)
-                    break;
+                    if (line is null)
+                        break;
 
-                var stdin = line.Split(' ');
+                    var stdin = line.Split(' ');
 
-                _ = Parser.Default.ParseArguments<
-                    DoCommand,
-                    EntryCommand,
-                    ExitCommand,
-                    IssueCommand,
-                    InfoCommand,
-                    SummaryCommand,
-                    IssueSummaryCommand,
-                    HistoryCommand,
-                    TestCommand,
-                    JiraCommand
-                >(stdin)
-                .WithParsed<BaseCommand>(o => o.Run(host, dbContext));
-                
-                dbContext.ChangeTracker.Clear();
+                    _ = Parser.Default.ParseArguments<
+                        DoCommand,
+                        EntryCommand,
+                        ExitCommand,
+                        IssueCommand,
+                        InfoCommand,
+                        SummaryCommand,
+                        IssueSummaryCommand,
+                        HistoryCommand,
+                        TestCommand,
+                        JiraCommand,
+                        ConfigCommand
+                    >(stdin)
+                    .WithParsed<BaseCommand>(o => o.Run(host, dbContext));
+                }
+                catch (Exception ex) {
+                    Console.WriteLine("Error:");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("\n");
+                    Console.WriteLine("StackTrace:");
+                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine("\n");
+                }
+                finally {
+                    dbContext.ChangeTracker.Clear();
+                }
             }
         }
 

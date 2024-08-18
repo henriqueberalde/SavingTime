@@ -25,7 +25,18 @@ namespace SavingTime
                 services.AddScoped<ISavingTimeApplication, SavingTimeApplication>();
                 services.AddSingleton<SavingTimeDbContext, SavingTimeDbContext>();
                 services.AddSingleton<DbContext, SavingTimeDbContext>();
+
                 services.AddSingleton<DoCommand>();
+                services.AddSingleton<EntryCommand>();
+                services.AddSingleton<ExitCommand>();
+                services.AddSingleton<HistoryCommand>();
+                services.AddSingleton<InfoCommand>();
+                services.AddSingleton<IssueCommand>();
+                services.AddSingleton<SummaryCommand>();
+                services.AddSingleton<IssueSummaryCommand>();
+                services.AddSingleton<JiraCommand>();
+                services.AddSingleton<TestCommand>();
+                services.AddSingleton<ConfigCommand>();
 
                 services.AddScoped<TimeRecordService>();
                 services.AddScoped<IssueService>();
