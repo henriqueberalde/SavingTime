@@ -1,10 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("history", HelpText = "All time records.")]
     public class HistoryCommand : BaseCommand

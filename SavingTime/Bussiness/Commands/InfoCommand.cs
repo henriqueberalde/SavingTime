@@ -1,12 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
-using SavingTime.Entities;
-using System.Collections.Generic;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("info", HelpText = "Show informations about the day.")]
     public class InfoCommand : BaseCommand

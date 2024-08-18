@@ -1,11 +1,11 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("summary", HelpText = "Summary of the time records on the period (default: current month).")]
     public class SummaryCommand : BaseCommand
@@ -13,17 +13,13 @@ namespace SavingTime.Bussiness
         [Option('m', "month", Required = false, HelpText = "Month of records to show")]
         public int? Month { get; set; }
 
-
-        private TimeRecordService? timeRecordService { get; set; }
-
-        private IssueService? issueRecordService { get; set; }
-
         public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
             base.Run(host, dbContext);
             try
             {
-                showSummary();
+                var timeRecordService = host.Services.GetService<TimeRecordService>();
+                showSummary(timeRecordService);
             }
             catch (Exception ex)
             {
@@ -33,13 +29,7 @@ namespace SavingTime.Bussiness
             }
         }
 
-        protected override void Init()
-        {
-            issueRecordService = new IssueService(DbContext!);
-            timeRecordService = new TimeRecordService(DbContext!, issueRecordService);
-        }
-
-        private void showSummary() {
+        private void showSummary(TimeRecordService timeRecordService) {
             IQueryable<TimeRecord> query;
             var dateRef = Month.HasValue ? new DateTime(DateTime.Now.Year, Month.Value, 1) : DateTime.Now;
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;

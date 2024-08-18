@@ -11,8 +11,6 @@ namespace SavingTime.Bussiness.Commands
         public virtual void Run(IHost host, SavingTimeDbContext dbContext) {
             DbContext = dbContext;
             Host = host;
-            Init();
         }
-        protected virtual void Init() { }
     }
 }

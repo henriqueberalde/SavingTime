@@ -1,10 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("issue-summary", HelpText = "Summary of the issue record on the period (default: current month).")]
     public class IssueSummaryCommand : BaseCommand

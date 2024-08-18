@@ -3,22 +3,17 @@ using Integrations.Jira;
 using Integrations.Jira.Classes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Bussiness.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("jira", HelpText = "Log work into jira")]
     public class JiraCommand : BaseCommand
     {
         [Option('m', "month", Required = false, HelpText = "Month of records to log into jira")]
         public int? Month { get; set; }
-
-        private TimeRecordService? timeRecordService { get; set; }
-
-        private IssueService? issueRecordService { get; set; }
 
         public override void Run(IHost host, SavingTimeDbContext dbContext) {
             base.Run(host, dbContext);
@@ -95,12 +90,6 @@ namespace SavingTime.Bussiness
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
-        protected override void Init()
-        {
-            issueRecordService = new IssueService(DbContext!);
-            timeRecordService = new TimeRecordService(DbContext!, issueRecordService);
         }
     }
 }

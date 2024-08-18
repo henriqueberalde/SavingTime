@@ -3,21 +3,14 @@ using Integrations.Ponto;
 using Integrations.Ponto.Classes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
-    public abstract class LogTimeCommand: BaseCommand
+    public abstract class LogTimeCommand: AbstractTimeCommand
     {
         public TimeRecordType TypeRecord { get; set; }
-
-        [Option('d', "date", Required = false, HelpText = "The Datetime of the record. Format: YYYY-MM-DDTHH:MM")]
-        public string? RefDateTime { get; set; }
-
-        [Option('t', "time", Required = false, HelpText = "The Time of the record. Format: HH:MM")]
-        public string? Time { get; set; }
 
         [Option('c', "context", Required = false, HelpText = "Context of the record.")]
         public string? Context { get; set; }
@@ -25,66 +18,9 @@ namespace SavingTime.Bussiness
         [Option("no-integration", HelpText = "Context of the record.")]
         public bool CancelIntegration { get; set; }
 
-        private TimeRecordService? timeRecordService { get; set; }
-        private IssueService? issueRecordService { get; set; }
-
-        public DateTime? DateTimeConverted
-        {
-            get
-            {
-                return convertDateTime() ?? convertTime();
-            }
-        }
-
         public LogTimeCommand(TimeRecordType type)
         {
             TypeRecord = type;
-        }
-
-        private DateTime? convertDateTime()
-        {
-            return RefDateTime is not null
-                ? System.DateTime.ParseExact(
-                    RefDateTime,
-                    "yyyy-MM-ddTHH:mm",
-                    System.Globalization.CultureInfo.InvariantCulture
-                )
-                : null;
-        }
-
-        private DateTime? convertTime()
-        {
-            if (Time is null) { return null; }
-
-            var timeParts = Time.Split(':');
-
-            var isValid =
-                Time.Length == 5 &&
-                Time.Contains(':') &&
-                timeParts.Length == 2;
-
-            var isHourNumber = int.TryParse(timeParts[0], out var hour);
-            var isMinuteNumber = int.TryParse(timeParts[1], out var minute);
-
-            isValid = isValid &&
-                isHourNumber &&
-                isMinuteNumber &&
-                hour >= 0 && hour <= 23 &&
-                minute >= 0 && minute <= 59;
-
-            if (!isValid)
-            {
-                throw new ArgumentException($"Time is invalid {Time}. Correct format: HH:mm");
-            }
-
-            return new DateTime(
-                System.DateTime.Now.Year,
-                System.DateTime.Now.Month,
-                System.DateTime.Now.Day,
-                hour,
-                minute,
-                0
-            );
         }
 
         public override void Run(IHost host, SavingTimeDbContext dbContext)
@@ -92,16 +28,11 @@ namespace SavingTime.Bussiness
             base.Run(host, dbContext);
 
             var pontoConfig = host.Services.GetService<PontoConfiguration>();
-            RegisterTimeRecord(pontoConfig);
+            var timeRecordService = host.Services.GetService<TimeRecordService>();
+            RegisterTimeRecord(timeRecordService, pontoConfig);
         }
 
-        protected override void Init()
-        {
-            issueRecordService = new IssueService(DbContext!);
-            timeRecordService = new TimeRecordService(DbContext!, issueRecordService);
-        }
-
-        public void RegisterTimeRecord(PontoConfiguration pontoConfig)
+        public void RegisterTimeRecord(TimeRecordService timeRecordService, PontoConfiguration pontoConfig)
         {
             var now = DateTime.Now;
             var dateTime = DateTimeConverted ?? new DateTime(
@@ -151,58 +82,6 @@ namespace SavingTime.Bussiness
         private void RunInfoCommand()
         {
             new InfoCommand().Run(Host, DbContext!);
-        }
-    }
-
-    [Verb("entry", HelpText = "Register an entry record.")]
-    public class EntryCommand : LogTimeCommand
-    {
-        public EntryCommand(PontoConfiguration pontoConfig) : base(TimeRecordType.Entry)
-        {
-        }
-    }
-
-    [Verb("exit", HelpText = "Register an exit record.")]
-    public class ExitCommand : LogTimeCommand
-    {
-        public ExitCommand(PontoConfiguration pontoConfig) : base(TimeRecordType.Exit)
-        {
-        }
-    }
-
-    [Verb("do", HelpText = "Register an entry or exit record, depends on the last command done. If it was an entry then now would be an exit.")]
-    public class DoCommand: BaseCommand
-    {
-        [Value(0, Required = false, HelpText = "Context")]
-        public string? Context { get; set; }
-
-        private TimeRecordService? timeRecordService { get; set; }
-        private IssueService? issueRecordService { get; set; }
-        private PontoConfiguration PontoConfig { get; set; }
-
-        public DoCommand(PontoConfiguration pontoConfig) {
-            PontoConfig = pontoConfig;
-        }
-
-        public override void Run(IHost host, SavingTimeDbContext dbContext)
-        {
-            base.Run(host, dbContext);
-            var lastType = timeRecordService!.LastType() ?? TimeRecordType.Exit;
-            LogTimeCommand command = new EntryCommand(PontoConfig);
-
-            if (lastType == TimeRecordType.Entry)
-            {
-                command = new ExitCommand(PontoConfig);
-            }
-
-            command.Context = Context;
-            command.Run(host, DbContext!);
-        }
-
-        protected override void Init()
-        {
-            issueRecordService = new IssueService(DbContext!);
-            timeRecordService = new TimeRecordService(DbContext!, issueRecordService);
         }
     }
 }

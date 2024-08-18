@@ -1,10 +1,10 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Bussiness.Commands
 {
     [Verb("issue", HelpText = "Register an issue entry.")]
     public class IssueCommand : BaseCommand
@@ -13,7 +13,6 @@ namespace SavingTime.Bussiness
 
         [Value(0, Required = true, HelpText = "Issue's identifier.")]
         public string? Issue { get; set; }
-        private IssueService? issueRecordService { get; set; }
 
         public IssueCommand()
         {
@@ -22,6 +21,7 @@ namespace SavingTime.Bussiness
 
         public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
+            var issueRecordService = host.Services.GetService<IssueService>();
             base.Run(host, dbContext);
             var now = DateTime.Now;
             var dateTime = new DateTime(
@@ -32,11 +32,6 @@ namespace SavingTime.Bussiness
                 now.Minute,
                 0);
             issueRecordService!.Entry(dateTime, Issue);
-        }
-
-        protected override void Init()
-        {
-            issueRecordService = new IssueService(DbContext!);
         }
     }
 }
