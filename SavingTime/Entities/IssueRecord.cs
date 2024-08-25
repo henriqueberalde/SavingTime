@@ -15,9 +15,9 @@ namespace SavingTime.Entities
         public override string ToString()
         {
             string typeInfo = Type == TimeRecordType.Exit ? $"{Type} " : Type.ToString();
-            var context = Issue ?? "";
+            var issue = Issue ?? "";
 
-            return $"{typeInfo} - {Id} {Time} {context}";
+            return $"{typeInfo} - {Id} {Time} {issue}";
         }
     }
 }

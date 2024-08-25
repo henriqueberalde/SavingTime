@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SavingTime.Data;
 using SavingTime.Entities;
-using System;
 
 namespace SavingTime.Bussiness.Commands
 {
@@ -13,10 +12,10 @@ namespace SavingTime.Bussiness.Commands
     {
         public TimeRecordType TypeRecord { get; set; }
 
-        [Option('c', "context", Required = false, HelpText = "Context of the record. If context is passed an issue will be record with it's value")]
-        public string? Context { get; set; }
+        [Option('i', "issue", Required = false, HelpText = "Issue of the time record")]
+        public string? Issue { get; set; }
 
-        [Option("no-integration", HelpText = "Context of the record.")]
+        [Option("no-integration", HelpText = "Cancel any integrations with external systems.")]
         public bool CancelIntegration { get; set; }
 
         public LogTimeCommand(TimeRecordType type)
@@ -33,11 +32,10 @@ namespace SavingTime.Bussiness.Commands
             var dateTime = DateTimeConvertedOrNow();
             var timeRecord = new TimeRecord(
                 dateTime,
-                TypeRecord,
-                Context
+                TypeRecord
             );
 
-            timeRecordService!.Add(timeRecord);
+            timeRecordService!.Add(timeRecord, Issue);
 
             if (!CancelIntegration)
             {

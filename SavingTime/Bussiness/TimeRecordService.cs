@@ -14,7 +14,7 @@ namespace SavingTime.Bussiness
             this.issueService = issueService;
         }
 
-        public void Add(TimeRecord timeRecord)
+        public void Add(TimeRecord timeRecord, string? issue)
         {
             using var transaction = dbContext.Database.BeginTransaction();
             try
@@ -25,17 +25,18 @@ namespace SavingTime.Bussiness
 
                 if (lastIssue is not null)
                 {
+                    var issueToSave = lastIssue.Issue;
+
+                    if (timeRecord.Type == TimeRecordType.Entry && !string.IsNullOrEmpty(issue))
+                        issueToSave = issue;
+
                     issueService.Add(new IssueRecord(
                         timeRecord.Time,
                         timeRecord.Type,
-                        lastIssue.Issue)
+                        issueToSave)
                     );
                 }
-                else if (!string.IsNullOrEmpty(timeRecord.Context))
-                {
-                    issueService.Entry(timeRecord.Time, timeRecord.Context);
-                }
-                
+
                 transaction.Commit();
             }
             catch (Exception)
@@ -46,10 +47,9 @@ namespace SavingTime.Bussiness
 
         private void addTimeRecord(TimeRecord timeRecord)
         {
-            var context = timeRecord.Context is not null ? $"[{timeRecord.Context}]" : "";
             dbContext.Add(timeRecord);
             dbContext.SaveChanges();
-            Console.WriteLine($"{timeRecord.Type} Registered {context}");
+            Console.WriteLine($"{timeRecord.Type} Registered");
         }
 
         public bool IsWorking()

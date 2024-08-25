@@ -31,7 +31,7 @@ namespace SavingTime.Bussiness.Commands
 
             if (timeRecordService!.LastType(list) == TimeRecordType.Entry)
             {
-                list.Add(new TimeRecord(dateRef, TimeRecordType.Exit, null));
+                list.Add(new TimeRecord(dateRef, TimeRecordType.Exit));
             }
 
             Console.ForegroundColor = ConsoleColor.White;

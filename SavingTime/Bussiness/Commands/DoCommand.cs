@@ -9,8 +9,8 @@ namespace SavingTime.Bussiness.Commands
     [Verb("do", HelpText = "Register an entry or exit record, depends on the last command done. If it was an entry then now would be an exit.")]
     public class DoCommand : BaseCommand
     {
-        [Value(0, Required = false, HelpText = "Context")]
-        public string? Context { get; set; }
+        [Value(0, Required = false, HelpText = "Issue to be recorded if it is a entry record")]
+        public string? Issue { get; set; }
 
         public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
@@ -24,7 +24,7 @@ namespace SavingTime.Bussiness.Commands
                 command = host.Services.GetService<ExitCommand>();
             }
 
-            command.Context = Context;
+            command.Issue = Issue;
             command.Run(host, DbContext!);
         }
     }
