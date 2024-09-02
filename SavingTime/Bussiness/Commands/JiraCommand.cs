@@ -73,7 +73,7 @@ namespace SavingTime.Bussiness.Commands
 
         private void sendToJira(JiraWorklog worklog) {
             var hours = worklog.TimeSpentInSeconds / 60 / 60;
-            var str = $"{worklog.DateTime:dd/MM/ss} | {worklog.Issue} - {worklog.TimeSpentInSeconds} ({hours:00.00} in hours))";
+            var str = $"{worklog.DateTime:dd/MM/yyyy} | {worklog.Issue} - {worklog.TimeSpentInSeconds} ({hours:00.00} in hours))";
 
             if (!worklog.Issue.StartsWith("CNBSE-")) {
                 Console.WriteLine($"Ignored {str}");
@@ -82,8 +82,15 @@ namespace SavingTime.Bussiness.Commands
 
             try
             {
-                var jiraIntegration = Host.Services.GetService<JiraIntegration>();
-                jiraIntegration?.PostWorklog(worklog).Wait();
+                var jiraConfig = Host.Services.GetService<JiraConfiguration>();
+                var option = new JiraIntegrationOptions {
+                    Url = jiraConfig.Url,
+                    Endpoint = jiraConfig.Endpoint,
+                    Token = jiraConfig.Token,
+                };
+
+                var jiraIntegration = new JiraIntegration(option);
+                jiraIntegration.PostWorklog(worklog).Wait();
                 Console.WriteLine($"Sent {str}");
             }
             catch (Exception e)

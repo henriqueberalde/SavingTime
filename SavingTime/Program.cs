@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Integrations.Jira;
+using Integrations.Jira.Classes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,17 +28,18 @@ namespace SavingTime
                 services.AddSingleton<SavingTimeDbContext, SavingTimeDbContext>();
                 services.AddSingleton<DbContext, SavingTimeDbContext>();
 
-                services.AddSingleton<DoCommand>();
-                services.AddSingleton<EntryCommand>();
-                services.AddSingleton<ExitCommand>();
-                services.AddSingleton<HistoryCommand>();
-                services.AddSingleton<InfoCommand>();
-                services.AddSingleton<IssueCommand>();
-                services.AddSingleton<SummaryCommand>();
-                services.AddSingleton<IssueSummaryCommand>();
-                services.AddSingleton<JiraCommand>();
-                services.AddSingleton<TestCommand>();
-                services.AddSingleton<ConfigCommand>();
+                services.AddScoped<DoCommand>();
+                services.AddScoped<EntryCommand>();
+                services.AddScoped<ExitCommand>();
+                services.AddScoped<HistoryCommand>();
+                services.AddScoped<InfoCommand>();
+                services.AddScoped<IssueCommand>();
+                services.AddScoped<SummaryCommand>();
+                services.AddScoped<IssueSummaryCommand>();
+                services.AddScoped<JiraCommand>();
+                services.AddScoped<TestCommand>();
+                services.AddScoped<ConfigCommand>();
+                services.AddScoped<JiraIntegration>();
 
                 services.AddScoped<TimeRecordService>();
                 services.AddScoped<IssueService>();
