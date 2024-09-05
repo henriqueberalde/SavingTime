@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Helpers;
+using SavingTime.Business.Helpers;
 using SavingTime.Data;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("history", HelpText = "All time records and issue records.")]
     public class HistoryCommand : BaseCommand

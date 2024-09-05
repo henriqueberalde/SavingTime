@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     public abstract class LogTimeCommand: AbstractTimeCommand
     {

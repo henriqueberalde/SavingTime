@@ -3,11 +3,11 @@ using Integrations.Jira;
 using Integrations.Jira.Classes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Helpers;
+using SavingTime.Business.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("jira", HelpText = "Log work into jira")]
     public class JiraCommand : BaseCommand

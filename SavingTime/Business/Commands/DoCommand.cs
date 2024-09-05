@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("do", HelpText = "Register an entry or exit record, depends on the last command done. If it was an entry then now would be an exit.")]
     public class DoCommand : BaseCommand

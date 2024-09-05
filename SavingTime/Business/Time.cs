@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Business
 {
     public class Time
     {

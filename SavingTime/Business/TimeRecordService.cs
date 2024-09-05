@@ -1,7 +1,7 @@
 ﻿using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Business
 {
     public class TimeRecordService
     {

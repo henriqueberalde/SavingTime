@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("exit", HelpText = "Register an exit record.")]
     public class ExitCommand : LogTimeCommand

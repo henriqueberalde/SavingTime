@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("issue", HelpText = "Register an issue entry.")]
     public class IssueCommand : AbstractTimeCommand

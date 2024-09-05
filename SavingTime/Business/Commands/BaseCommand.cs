@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using SavingTime.Data;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     public abstract class BaseCommand
     {

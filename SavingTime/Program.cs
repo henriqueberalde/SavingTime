@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness;
-using SavingTime.Bussiness.Commands;
+using SavingTime.Business;
+using SavingTime.Business.Commands;
 using SavingTime.Data;
 using System.Globalization;
 

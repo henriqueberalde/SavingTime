@@ -1,8 +1,8 @@
-﻿using SavingTime.Bussiness.Helpers;
+﻿using SavingTime.Business.Helpers;
 using SavingTime.Entities;
 using System.Text;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Business
 {
     public class Summary
     {

@@ -1,4 +1,4 @@
-﻿namespace SavingTime.Bussiness
+﻿namespace SavingTime.Business
 {
     public class WorkedSlice
     {

@@ -4,10 +4,10 @@ using Integrations.Ponto;
 using Integrations.Ponto.Classes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
+using SavingTime.Business.Commands;
 using SavingTime.Data;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Business
 {
     [Verb("test", HelpText = "Test integrations.")]
     public class TestCommand : BaseCommand

@@ -1,4 +1,4 @@
-﻿namespace SavingTime.Bussiness.Helpers
+﻿namespace SavingTime.Business.Helpers
 {
     public static class DateTimeHelper
     {

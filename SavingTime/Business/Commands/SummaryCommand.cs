@@ -1,11 +1,11 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Helpers;
+using SavingTime.Business.Helpers;
 using SavingTime.Data;
 using SavingTime.Entities;
 
-namespace SavingTime.Bussiness.Commands
+namespace SavingTime.Business.Commands
 {
     [Verb("summary", HelpText = "Summary of the time records on the period (default: current month).")]
     public class SummaryCommand : BaseCommand

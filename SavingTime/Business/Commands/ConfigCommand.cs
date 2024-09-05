@@ -1,11 +1,11 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SavingTime.Bussiness.Commands;
+using SavingTime.Business.Commands;
 using SavingTime.Data;
 using System.ComponentModel;
 
-namespace SavingTime.Bussiness
+namespace SavingTime.Business
 {
     [Verb("config", HelpText = "Show configuration values.")]
     public class ConfigCommand : BaseCommand
