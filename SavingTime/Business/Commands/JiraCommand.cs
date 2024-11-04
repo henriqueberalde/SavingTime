@@ -22,7 +22,9 @@ namespace SavingTime.Business.Commands
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
 
             var issues = dbContext.IssueRecords
-                .Where(tr => tr.Time >= refDate && tr.Time <= DateTimeHelper.LastTimeOfDay(DateTimeHelper.LastDayOfMonth(refDate)))
+                .Where(tr => tr.Time >= refDate
+                             && tr.Time <= DateTimeHelper.LastTimeOfDay(DateTimeHelper.LastDayOfMonth(refDate))
+                             && !tr.Sent)
                 .OrderBy(t => t.Time)
                 .ThenByDescending(t => t.Id)
                 .ToList();
@@ -39,32 +41,36 @@ namespace SavingTime.Business.Commands
 
             foreach (var groupItem in issues.GroupBy(r => new { r.Time.Date, r.Issue }))
             {
-                var slices = new List<TimeSpan>();
                 var items = groupItem.OrderBy(r => r.Time).ThenByDescending(r => r.Id);
                 DateTime? currentBeginDateTime = null;
+                IssueRecord? entry = null;
 
                 foreach (var record in items)
                 {
                     if (record.Type == TimeRecordType.Entry)
                     {
-                        currentBeginDateTime = record.Time;
+                        entry = record;
                     }
                     else
                     {
-                        if (!currentBeginDateTime.HasValue)
+                        if (entry == null)
                             throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key:yyyy/MM/dd}.");
 
-                        var timeSpanDiff = record.Time - currentBeginDateTime.Value;
+                        var timeSpanDiff = record.Time - entry.Time;
 
                         var worklog = new JiraWorklog
                         {
                             Issue = groupItem.Key.Issue,
                             Message = groupItem.Key.Issue,
                             DateTime = record.Time,
-                            TimeSpentInSeconds = timeSpanDiff.TotalSeconds
+                            TimeSpentInSeconds = timeSpanDiff.TotalSeconds,
+                            Sent = entry.Sent || record.Sent
                         };
 
                         sendToJira(worklog);
+                        entry.Sent = true;
+                        record.Sent = true;
+                        dbContext.SaveChanges();
                     }
                 }
                 
@@ -75,8 +81,14 @@ namespace SavingTime.Business.Commands
             var hours = worklog.TimeSpentInSeconds / 60 / 60;
             var str = $"{worklog.DateTime:dd/MM/yyyy} | {worklog.Issue} - {worklog.TimeSpentInSeconds} ({hours:00.00} in hours))";
 
+            if (worklog.Sent)
+            {
+                Console.WriteLine($"Has been sent before {str}");
+                return;
+            }
+
             if (!worklog.Issue.StartsWith("CNBSE-")) {
-                Console.WriteLine($"Ignored {str}");
+                Console.WriteLine($"Ignored              {str}");
                 return;
             }
 
@@ -91,7 +103,7 @@ namespace SavingTime.Business.Commands
 
                 var jiraIntegration = new JiraIntegration(option);
                 jiraIntegration.PostWorklog(worklog).Wait();
-                Console.WriteLine($"Sent {str}");
+                Console.WriteLine($"Sent                 {str}");
             }
             catch (Exception e)
             {

@@ -5,6 +5,7 @@ namespace SavingTime.Entities
     public class IssueRecord : BaseTimeRecord
     {
         public string Issue { get; set; }
+        public bool Sent { get; set; } = false;
         public IssueRecord(
             DateTime time,
             TimeRecordType type,

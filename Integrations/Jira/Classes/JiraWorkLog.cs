@@ -4,6 +4,7 @@
         public string Issue { get; set; }
         public string Message { get; set; }
         public DateTime DateTime { get; set; }
+        public bool Sent { get; set; }
 
         public string DateTimeFormated
         {
