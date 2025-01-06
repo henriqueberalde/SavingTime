@@ -6,16 +6,13 @@ using SavingTime.Data;
 namespace SavingTime.Business.Commands
 {
     [Verb("issue-summary", HelpText = "Summary of the issue record on the period (default: current month).")]
-    public class IssueSummaryCommand : BaseCommand
+    public class IssueSummaryCommand : AbstractMonthCommand
     {
-        [Option('m', "month", Required = false, HelpText = "Month of records to show")]
-        public int? Month { get; set; }
-
         public override void Run(IHost host, SavingTimeDbContext dbContext)
         {
             base.Run(host, dbContext);
             var query = dbContext.IssueRecords.AsQueryable();
-            var dateRef = Month.HasValue ? new DateTime(DateTime.Now.Year, Month.Value, 1) : DateTime.Now;
+            var dateRef = DateRef ?? DateTime.Now;
             var refDate = DateTimeHelper.FirstDayOfMonth(dateRef).Date;
             query = dbContext.IssueRecords.Where(tr => tr.Time >= refDate && tr.Time <= DateTimeHelper.LastTimeOfDay(DateTimeHelper.LastDayOfMonth(refDate)));
 
