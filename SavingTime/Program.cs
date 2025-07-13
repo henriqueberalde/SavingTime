@@ -39,7 +39,6 @@ namespace SavingTime
                 services.AddScoped<JiraCommand>();
                 services.AddScoped<TestCommand>();
                 services.AddScoped<ConfigCommand>();
-                services.AddScoped<JiraIntegration>();
 
                 services.AddScoped<TimeRecordService>();
                 services.AddScoped<IssueService>();

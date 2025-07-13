@@ -36,7 +36,7 @@ public class JiraCommand : AbstractMonthCommand
             return;
         }
 
-        foreach (var groupItem in issues.GroupBy(r => new { r.Time.Date, r.Issue }))
+        foreach (var groupItem in issues.GroupBy(r => new { r.Time.Date, r.Issue, r.Comment }))
         {
             var items = groupItem.OrderBy(r => r.Time).ThenByDescending(r => r.Id);
             DateTime? currentBeginDateTime = null;
@@ -51,14 +51,14 @@ public class JiraCommand : AbstractMonthCommand
                 else
                 {
                     if (entry == null)
-                        throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key:yyyy/MM/dd}.");
+                        throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key.Date:yyyy/MM/dd}.");
 
                     var timeSpanDiff = record.Time - entry.Time;
 
                     var worklog = new JiraWorklog
                     {
                         Issue = groupItem.Key.Issue,
-                        Message = groupItem.Key.Issue,
+                        Message = groupItem.Key.Comment ?? "",
                         DateTime = record.Time,
                         TimeSpentInSeconds = timeSpanDiff.TotalSeconds,
                         Sent = entry.Sent || record.Sent
@@ -76,7 +76,7 @@ public class JiraCommand : AbstractMonthCommand
 
     private void sendToJira(JiraWorklog worklog)
     {
-        var prefixIssues = new List<string>{"CNBSE-", "CRD-"};
+        var prefixIssues = new List<string>{"CNBSE-", "CRD-", "CENP-"};
         var hours = worklog.TimeSpentInSeconds / 60 / 60;
         var str = $"{worklog.DateTime:dd/MM/yyyy} | {worklog.Issue} - {worklog.TimeSpentInSeconds} ({hours:00.00} in hours))";
 

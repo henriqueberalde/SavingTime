@@ -14,7 +14,7 @@ namespace SavingTime.Business
             this.issueService = issueService;
         }
 
-        public void Add(TimeRecord timeRecord, string? issue)
+        public void Add(TimeRecord timeRecord, string? issue, string? comment = null)
         {
             using var transaction = dbContext.Database.BeginTransaction();
             try
@@ -33,7 +33,8 @@ namespace SavingTime.Business
                     issueService.Add(new IssueRecord(
                         timeRecord.Time,
                         timeRecord.Type,
-                        issueToSave)
+                        issueToSave,
+                        comment)
                     );
                 }
 

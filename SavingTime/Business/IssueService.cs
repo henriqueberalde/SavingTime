@@ -12,16 +12,16 @@ namespace SavingTime.Business
             this.dbContext = dbContext;
         }
 
-        public void Entry(DateTime dateTime, string issue)
+        public void Entry(DateTime dateTime, string issue, string? comment = null)
         {
             var lastIssue = LastIssue(dateTime);
 
             if (lastIssue is not null && lastIssue.Type == TimeRecordType.Entry)
             {
-                Add(new IssueRecord(dateTime, TimeRecordType.Exit, lastIssue.Issue));
+                Add(new IssueRecord(dateTime, TimeRecordType.Exit, lastIssue.Issue, lastIssue.Comment));
             }
 
-            Add(new IssueRecord(dateTime, TimeRecordType.Entry, issue));
+            Add(new IssueRecord(dateTime, TimeRecordType.Entry, issue, comment));
         }
 
         public void Add(IssueRecord issue)
@@ -71,7 +71,7 @@ namespace SavingTime.Business
             }
 
             var descriptionMaxlength = list.Select(i => i.Issue.Length).Max();
-            foreach (var groupItem in list.GroupBy(r => new { r.Time.Date, r.Issue }))
+            foreach (var groupItem in list.GroupBy(r => new { r.Time.Date, r.Issue, r.Comment }))
             {
                 var slices = new List<TimeSpan>();
                 var items = groupItem.OrderBy(r => r.Time).ThenByDescending(r => r.Id);
@@ -86,7 +86,7 @@ namespace SavingTime.Business
                     else
                     {
                         if (!currentBeginDateTime.HasValue)
-                            throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key:yyyy/MM/dd}.");
+                            throw new Exception($"Error to process record {record.Time:yyyy/MM/dd} on day {groupItem.Key.Date:yyyy/MM/dd}.");
 
                         var timeSpan = record.Time - currentBeginDateTime.Value;
                         slices.Add(timeSpan);
@@ -98,8 +98,10 @@ namespace SavingTime.Business
                 decimal totalHoursInDecimal = (decimal)slices.Sum(s => s.TotalHours);
                 var issueLenght = groupItem.Key.Issue.Length;
                 var issueStr = $"{groupItem.Key.Issue}".PadRight(descriptionMaxlength, ' ');
+                var commentStr = string.IsNullOrEmpty(groupItem.Key.Comment) ? "": groupItem.Key.Comment.Substring(0, 8) + "...";
+                commentStr = commentStr.PadRight(11, ' ');
 
-                Console.WriteLine($"{groupItem.Key.Date.ToString("dd/MM")} | {issueStr} - {totalInTimeSpan.Hours:D2}:{totalInTimeSpan.Minutes:D2} (In hour: {totalHoursInDecimal:00.00}) (In sec: {totalInTimeSpan.TotalSeconds:000000})");
+                Console.WriteLine($"{groupItem.Key.Date.ToString("dd/MM")} | {issueStr} {commentStr} - {totalInTimeSpan.Hours:D2}:{totalInTimeSpan.Minutes:D2} (In hour: {totalHoursInDecimal:00.00}) (In sec: {totalInTimeSpan.TotalSeconds:000000})");
             }
         }
     }

@@ -8,12 +8,12 @@ using SavingTime.Entities;
 
 namespace SavingTime.Business.Commands
 {
-    public abstract class LogTimeCommand: AbstractTimeCommand
+    public abstract class LogTimeCommand: AbstractIssueAndTimeCommand
     {
         public TimeRecordType TypeRecord { get; set; }
 
         [Option('i', "issue", Required = false, HelpText = "Issue of the time record")]
-        public string? Issue { get; set; }
+        public override string? Issue { get; set; }
 
         [Option("no-integration", HelpText = "Cancel any integrations with external systems.")]
         public bool CancelIntegration { get; set; }
@@ -35,7 +35,7 @@ namespace SavingTime.Business.Commands
                 TypeRecord
             );
 
-            timeRecordService!.Add(timeRecord, Issue);
+            timeRecordService!.Add(timeRecord, Issue, Comment);
 
             if (!CancelIntegration)
             {
