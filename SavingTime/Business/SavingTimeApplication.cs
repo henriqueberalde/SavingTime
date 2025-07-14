@@ -51,7 +51,7 @@ namespace SavingTime.Business
                     if (line is null)
                         break;
 
-                    var stdin = line.Split(' ');
+                    var stdin = ParseCommandLine(line);
 
                     _ = Parser.Default.ParseArguments<
                             DoCommand,
@@ -92,6 +92,43 @@ namespace SavingTime.Business
             Console.WriteLine("StackTrace:");
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine("\n");
+        }
+
+        private static string[] ParseCommandLine(string commandLine)
+        {
+            var args = new List<string>();
+            var currentArg = new System.Text.StringBuilder();
+            var inQuotes = false;
+
+            foreach (var c in commandLine)
+            {
+                switch (c)
+                {
+                    case '"':
+                        inQuotes = !inQuotes;
+                        break;
+                    case ' ' when !inQuotes:
+                    {
+                        if (currentArg.Length > 0)
+                        {
+                            args.Add(currentArg.ToString());
+                            currentArg.Clear();
+                        }
+
+                        break;
+                    }
+                    default:
+                        currentArg.Append(c);
+                        break;
+                }
+            }
+
+            if (currentArg.Length > 0)
+            {
+                args.Add(currentArg.ToString());
+            }
+
+            return args.ToArray();
         }
     }
 }

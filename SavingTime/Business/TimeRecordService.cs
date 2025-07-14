@@ -17,33 +17,31 @@ namespace SavingTime.Business
         public void Add(TimeRecord timeRecord, string? issue, string? comment = null)
         {
             using var transaction = dbContext.Database.BeginTransaction();
-            try
+            addTimeRecord(timeRecord);
+
+            var lastIssue = issueService.LastIssue();
+
+            if (lastIssue is not null)
             {
-                addTimeRecord(timeRecord);
+                var issueToSave = lastIssue.Issue;
 
-                var lastIssue = issueService.LastIssue();
+                if (timeRecord.Type == TimeRecordType.Entry && !string.IsNullOrEmpty(issue))
+                    issueToSave = issue;
 
-                if (lastIssue is not null)
-                {
-                    var issueToSave = lastIssue.Issue;
+                var commentToSave = lastIssue.Comment;
 
-                    if (timeRecord.Type == TimeRecordType.Entry && !string.IsNullOrEmpty(issue))
-                        issueToSave = issue;
+                if (timeRecord.Type == TimeRecordType.Entry && !string.IsNullOrEmpty(comment))
+                    commentToSave = comment;
 
-                    issueService.Add(new IssueRecord(
-                        timeRecord.Time,
-                        timeRecord.Type,
-                        issueToSave,
-                        comment)
-                    );
-                }
-
-                transaction.Commit();
+                issueService.Add(new IssueRecord(
+                    timeRecord.Time,
+                    timeRecord.Type,
+                    issueToSave,
+                    commentToSave)
+                );
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            transaction.Commit();
         }
 
         private void addTimeRecord(TimeRecord timeRecord)
