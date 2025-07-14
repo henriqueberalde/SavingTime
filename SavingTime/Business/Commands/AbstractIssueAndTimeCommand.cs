@@ -12,7 +12,7 @@ namespace SavingTime.Business.Commands
         /// </summary>
         public abstract string? Issue { get; set; }
 
-        [Option('c', "comment", Required = false, HelpText = "Comment for the time record (use quotes for values with spaces)")]
+        [Option('c', "comment", Required = false, HelpText = "Issue comment (use quotes for values with spaces)")]
         public string? Comment { get; set; }
     }
 }
