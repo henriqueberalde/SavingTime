@@ -98,7 +98,8 @@ namespace SavingTime.Business
                 decimal totalHoursInDecimal = (decimal)slices.Sum(s => s.TotalHours);
                 var issueLenght = groupItem.Key.Issue.Length;
                 var issueStr = $"{groupItem.Key.Issue}".PadRight(descriptionMaxlength, ' ');
-                var commentStr = string.IsNullOrEmpty(groupItem.Key.Comment) ? "": groupItem.Key.Comment.Substring(0, 8) + "...";
+                var commentStr = string.IsNullOrEmpty(groupItem.Key.Comment) ? "": groupItem.Key.Comment;
+                commentStr = commentStr.Length <= 8 ? commentStr : commentStr.Substring(0, 8) + "...";
                 commentStr = commentStr.PadRight(11, ' ');
 
                 Console.WriteLine($"{groupItem.Key.Date.ToString("dd/MM")} | {issueStr} {commentStr} - {totalInTimeSpan.Hours:D2}:{totalInTimeSpan.Minutes:D2} (In hour: {totalHoursInDecimal:00.00}) (In sec: {totalInTimeSpan.TotalSeconds:000000})");
